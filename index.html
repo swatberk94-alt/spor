@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#262624">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Spor">
+<title>Spor Takvimi</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 192 192%22%3E%3Crect width=%22192%22 height=%22192%22 rx=%2236%22 fill=%22%2354c39b%22/%3E%3Crect x=%2236%22 y=%2286%22 width=%22120%22 height=%2220%22 rx=%226%22 fill=%22white%22/%3E%3Crect x=%2240%22 y=%2260%22 width=%2222%22 height=%2272%22 rx=%228%22 fill=%22white%22/%3E%3Crect x=%22130%22 y=%2260%22 width=%2222%22 height=%2272%22 rx=%228%22 fill=%22white%22/%3E%3Crect x=%2220%22 y=%2274%22 width=%2214%22 height=%2244%22 rx=%225%22 fill=%22white%22/%3E%3Crect x=%22158%22 y=%2274%22 width=%2214%22 height=%2244%22 rx=%225%22 fill=%22white%22/%3E%3C/svg%3E">
+<link rel="manifest" href='data:application/manifest+json,{"name":"Spor Takvimi","short_name":"Spor","start_url":".","display":"standalone","background_color":"%23262624","theme_color":"%23262624","icons":[{"src":"data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 192 192%22%3E%3Crect width=%22192%22 height=%22192%22 rx=%2236%22 fill=%22%2354c39b%22/%3E%3Crect x=%2236%22 y=%2286%22 width=%22120%22 height=%2220%22 rx=%226%22 fill=%22white%22/%3E%3Crect x=%2240%22 y=%2260%22 width=%2222%22 height=%2272%22 rx=%228%22 fill=%22white%22/%3E%3Crect x=%22130%22 y=%2260%22 width=%2222%22 height=%2272%22 rx=%228%22 fill=%22white%22/%3E%3C/svg%3E","sizes":"192x192","type":"image/svg+xml"}]}'>
+<style>
+  :root{
+    --bg:#262624; --card:#30302e; --card-2:#3a3a37; --ink:#ecebe3; --muted:#a09d94;
+    --line:#403f3b; --accent:#54c39b; --accent-soft:rgba(84,195,155,.16); --danger:#cb5c4a;
+    --shadow:0 1px 2px rgba(0,0,0,.28),0 6px 18px rgba(0,0,0,.24);
+    --radius:16px;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0;background:var(--bg)}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,system-ui,sans-serif;
+    color:var(--ink);line-height:1.4;-webkit-font-smoothing:antialiased;
+    max-width:560px;margin:0 auto;padding:0 0 calc(40px + env(safe-area-inset-bottom));
+    -webkit-user-select:none;user-select:none;
+  }
+  button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:pointer}
+
+  header{position:sticky;top:0;z-index:6;background:var(--bg);padding:calc(14px + env(safe-area-inset-top)) 16px 0}
+  .top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .top h1{margin:0;font-size:20px;font-weight:800;letter-spacing:.2px}
+  .top h1 small{display:block;font-size:12px;font-weight:500;color:var(--muted);letter-spacing:0;margin-top:1px}
+  .gear{width:40px;height:40px;border-radius:12px;background:var(--card);border:1px solid var(--line);display:grid;place-items:center}
+  .gear svg{width:20px;height:20px;stroke:var(--muted)}
+  .wk-head{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;padding:12px 9px 8px;border-bottom:1px solid var(--line)}
+  .wk-head span{text-align:center;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.3px}
+  .wk-head span.we{color:#c9c6bc}
+
+  .wrap{padding:0 16px}
+
+  /* banner */
+  .banner{display:none;margin:12px 0 0;padding:10px 12px;border-radius:12px;background:rgba(224,163,64,.14);border:1px solid rgba(224,163,64,.4);font-size:13px;align-items:center;gap:10px}
+  .banner.on{display:flex}
+  .banner span{flex:1}
+  .banner button{background:#e0a340;color:#262624;font-weight:700;border-radius:9px;padding:7px 10px;font-size:12px;white-space:nowrap}
+
+  /* weeks */
+  .month{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin:20px 2px 8px}
+  .week{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:10px 8px 10px;margin-bottom:10px;box-shadow:var(--shadow)}
+  .week.cur{border-color:rgba(84,195,155,.55);box-shadow:0 0 0 1px rgba(84,195,155,.25),var(--shadow)}
+  .wtitle{display:flex;justify-content:space-between;align-items:baseline;padding:0 4px 8px;font-size:12px;color:var(--muted)}
+  .wtitle b{color:var(--ink);font-weight:700;font-size:13px}
+  .wtitle .cnt{font-variant-numeric:tabular-nums}
+  .wtitle .cnt i{font-style:normal;color:var(--accent);font-weight:700}
+  .days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
+
+  .day{position:relative;height:64px;min-width:0;border-radius:12px;background:var(--card-2);border:1px solid transparent;
+       display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:5px 0 6px;overflow:visible}
+  .day .dn{font-size:11px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums;line-height:1}
+  .day .slot{flex:1;display:grid;place-items:center;width:100%}
+  .day.blank{visibility:hidden}
+  .day.future{background:transparent;border:1px dashed var(--line);cursor:default}
+  .day.future .dn{opacity:.55}
+  .day.empty .slot{font-size:9.5px;font-weight:700;color:#77746c;text-transform:uppercase;letter-spacing:.3px;text-align:center;line-height:1.15}
+  .day.empty .slot .z{display:block;font-size:13px;opacity:.55;margin-bottom:1px;animation:zz 3.2s ease-in-out infinite}
+  .day.today{border-color:var(--accent);background:var(--accent-soft)}
+  .day.today .dn{color:var(--accent)}
+  .day.today.open .plus{width:30px;height:30px;border-radius:50%;border:2px dashed var(--accent);display:grid;place-items:center;color:var(--accent);font-size:20px;font-weight:600;line-height:1;animation:breathe 2.2s ease-in-out infinite}
+  .day.logged{background:color-mix(in srgb,var(--c) 22%,var(--card-2));border-color:color-mix(in srgb,var(--c) 55%,transparent)}
+  .day.logged .dn{color:color-mix(in srgb,var(--c) 70%,#fff)}
+  .day.today.logged{box-shadow:0 0 0 2px var(--accent)}
+  .day .pl{position:absolute;right:-3px;bottom:-4px;font-size:11px;width:19px;height:19px;border-radius:50%;background:var(--bg);border:1px solid var(--line);display:grid;place-items:center;line-height:1}
+  .day:active:not(.future){transform:scale(.94)}
+  .day{transition:transform .12s}
+  .day.pop{animation:pop .55s cubic-bezier(.2,1.6,.4,1)}
+
+  /* sport badge / icon */
+  .ic{display:inline-block;font-size:22px;line-height:1;will-change:transform;
+      font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
+  .badge{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:color-mix(in srgb,var(--c) 26%,transparent);border:1px solid color-mix(in srgb,var(--c) 60%,transparent)}
+  .badge .ic{font-size:24px}
+
+  .a-lift{animation:lift 1.6s ease-in-out infinite}
+  .a-squat{animation:squat 1.8s ease-in-out infinite;transform-origin:50% 100%}
+  .a-flex{animation:flex 1.4s ease-in-out infinite;transform-origin:30% 80%}
+  .a-steam{animation:steam 3s ease-in-out infinite}
+  .a-row{animation:row 2s ease-in-out infinite;transform-origin:50% 90%}
+  .a-beat{animation:beat 1.1s ease-in-out infinite}
+  .a-wave{animation:wave 2.6s ease-in-out infinite}
+  .a-run{animation:run .7s ease-in-out infinite}
+  .a-pedal{animation:pedal 1s ease-in-out infinite}
+  .a-bounce{animation:bounce 1s cubic-bezier(.5,0,.5,1) infinite;transform-origin:50% 100%}
+  .a-tennis{animation:tennis 1.3s ease-in-out infinite}
+  .a-swim{animation:swim 2.2s ease-in-out infinite}
+  .a-punch{animation:punch 1.5s ease-in-out infinite}
+  .a-jump{animation:jump .55s cubic-bezier(.4,0,.6,1) infinite;transform-origin:50% 100%}
+  @keyframes jump{0%,100%{transform:translateY(1px) scale(1.08,.92)}45%{transform:translateY(-5px) rotate(8deg) scale(.96,1.04)}55%{transform:translateY(-5px) rotate(-8deg)}}
+
+  @keyframes lift{0%,100%{transform:translateY(2px)}45%,60%{transform:translateY(-4px) scale(1.05)}}
+  @keyframes squat{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.82) scaleX(1.08)}}
+  @keyframes flex{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(10deg) scale(1.12)}}
+  @keyframes steam{0%,100%{transform:translateY(0);filter:none}50%{transform:translateY(-3px);filter:drop-shadow(0 -4px 4px rgba(255,255,255,.35))}}
+  @keyframes row{0%,100%{transform:rotate(-8deg) translateX(-1px)}50%{transform:rotate(8deg) translateX(2px)}}
+  @keyframes beat{0%,100%{transform:scale(1)}15%{transform:scale(1.2)}30%{transform:scale(1)}45%{transform:scale(1.13)}60%{transform:scale(1)}}
+  @keyframes wave{0%,100%{transform:translateX(-2px) rotate(-5deg)}50%{transform:translateX(2px) rotate(5deg)}}
+  @keyframes run{0%,100%{transform:translate(-1px,0)}50%{transform:translate(2px,-3px)}}
+  @keyframes pedal{0%,100%{transform:translateX(-2px) rotate(-3deg)}50%{transform:translateX(2px) rotate(3deg)}}
+  @keyframes bounce{0%,100%{transform:translateY(-6px)}45%{transform:translateY(2px) scale(1,1)}52%{transform:translateY(3px) scale(1.15,.85)}60%{transform:translateY(0) scale(1)}}
+  @keyframes tennis{0%,100%{transform:translate(-4px,1px) rotate(0)}50%{transform:translate(4px,-4px) rotate(200deg)}}
+  @keyframes swim{0%,100%{transform:translateX(-2px) translateY(0)}25%{transform:translateY(1.5px)}50%{transform:translateX(2px) translateY(0)}75%{transform:translateY(-1.5px)}}
+  @keyframes punch{0%,55%,100%{transform:translateX(-2px) rotate(0)}62%{transform:translateX(6px) rotate(-12deg) scale(1.15)}70%{transform:translateX(-2px)}78%{transform:translateX(5px) rotate(-8deg) scale(1.1)}86%{transform:translateX(-2px)}}
+  @keyframes breathe{0%,100%{transform:scale(.92);opacity:.7}50%{transform:scale(1.04);opacity:1}}
+  @keyframes zz{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+  @keyframes pop{0%{transform:scale(.7)}100%{transform:scale(1)}}
+
+  /* stats */
+  .stats{margin-top:14px}
+  .big{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+  .big div{background:var(--card-2);border-radius:12px;padding:10px 10px 9px}
+  .big b{display:block;font-size:22px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.1}
+  .big span{font-size:11.5px;color:var(--muted)}
+  .seg{display:flex;background:var(--card-2);border-radius:10px;padding:3px;gap:3px;margin-bottom:10px}
+  .seg button{flex:1;padding:7px 0;border-radius:8px;font-size:13px;font-weight:600;color:var(--muted)}
+  .seg button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.3)}
+  .bars{display:flex;flex-direction:column;gap:7px}
+  .bar{display:grid;grid-template-columns:26px 1fr 30px;align-items:center;gap:8px;font-size:13px}
+  .bar .ic{font-size:18px;text-align:center}
+  .bar .tr{position:relative;height:22px;border-radius:7px;background:var(--card-2);overflow:hidden}
+  .bar .fl{position:absolute;inset:0 auto 0 0;background:color-mix(in srgb,var(--c) 60%,transparent);border-radius:7px;transition:width .5s}
+  .bar .nm{position:absolute;left:8px;top:0;bottom:0;display:flex;align-items:center;font-size:12px;font-weight:600;white-space:nowrap}
+  .bar .n{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
+  .nodata{font-size:13px;color:var(--muted);text-align:center;padding:10px 0 4px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px}
+  .card h2{margin:0 0 10px;font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+
+  /* sheet */
+  .bg{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:20;opacity:0;pointer-events:none;transition:opacity .2s}
+  .bg.on{opacity:1;pointer-events:auto}
+  .sheet{position:fixed;left:0;right:0;bottom:0;margin:0 auto;max-width:560px;z-index:21;background:var(--card);border-radius:22px 22px 0 0;border-top:1px solid var(--line);
+         padding:8px 16px calc(18px + env(safe-area-inset-bottom));max-height:88vh;overflow-y:auto;transform:translateY(105%);transition:transform .28s cubic-bezier(.2,.9,.3,1)}
+  .sheet.on{transform:none}
+  .grab{width:40px;height:5px;border-radius:3px;background:var(--line);margin:2px auto 10px}
+  .sh-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:4px}
+  .sh-top h3{margin:0;font-size:18px;font-weight:800}
+  .sh-top .x{width:34px;height:34px;border-radius:50%;background:var(--card-2);font-size:18px;color:var(--muted)}
+  .sh-sub{font-size:12.5px;color:var(--muted);margin-bottom:12px}
+  .sh-sub b{color:var(--ink);font-weight:600}
+  .grp{font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin:12px 2px 8px}
+  .opts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .opt{position:relative;background:var(--card-2);border:1.5px solid transparent;border-radius:14px;padding:11px 4px 9px;display:flex;flex-direction:column;align-items:center;gap:7px;text-align:center}
+  .opt .lb{font-size:12px;font-weight:600;line-height:1.2;min-height:29px;display:flex;align-items:center}
+  .opt.sel{border-color:var(--c);background:color-mix(in srgb,var(--c) 18%,var(--card-2))}
+  .opt .tag{position:absolute;top:5px;right:5px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.3px;background:var(--accent);color:#1d2b25;border-radius:6px;padding:2px 5px}
+  .opt .pin{position:absolute;top:6px;left:7px;font-size:10px;opacity:.7}
+  .opt:active{transform:scale(.95)}
+  .places{display:none;grid-column:1/-1;background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:10px;gap:8px;grid-template-columns:repeat(3,1fr)}
+  .places.on{display:grid;animation:drop .22s ease-out}
+  .places .q{grid-column:1/-1;font-size:12px;color:var(--muted);text-align:center;margin-bottom:2px}
+  .pbtn{background:var(--card-2);border:1.5px solid transparent;border-radius:12px;padding:10px 4px;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12.5px;font-weight:600}
+  .pbtn .pe{font-size:22px}
+  .pbtn.sel{border-color:var(--accent);background:var(--accent-soft)}
+  @keyframes drop{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+  .clear{width:100%;margin-top:16px;padding:13px;border-radius:12px;background:transparent;border:1px solid var(--line);color:var(--danger);font-weight:700;font-size:14px}
+
+  /* settings */
+  .sbtn{width:100%;display:flex;align-items:center;gap:12px;padding:13px 12px;background:var(--card-2);border-radius:12px;margin-bottom:8px;font-size:14.5px;font-weight:600;text-align:left}
+  .sbtn .e{font-size:20px}
+  .note{font-size:12.5px;color:var(--muted);line-height:1.5;margin:4px 2px 14px}
+  .snap{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 4px;border-top:1px solid var(--line);font-size:13px}
+  .snap small{display:block;color:var(--muted);font-size:11.5px}
+  .snap button{background:var(--card-2);border-radius:9px;padding:7px 11px;font-size:12.5px;font-weight:600}
+
+  .fly{position:fixed;z-index:30;pointer-events:none;font-size:18px;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
+
+  /* ---------- tabs ---------- */
+  body{padding-bottom:calc(92px + env(safe-area-inset-bottom))}
+  .view{display:none}.view.on{display:block}
+  body.tab-guide .wk-head{display:none}
+  .chips{display:none;overflow-x:auto;gap:8px;padding:12px 0 10px;scrollbar-width:none;margin:0 -16px;padding-left:16px;padding-right:16px}
+  .chips::-webkit-scrollbar{display:none}
+  body.tab-guide .chips{display:flex}
+  .chip{flex:none;display:flex;align-items:center;gap:6px;padding:8px 12px 8px 9px;border-radius:999px;background:var(--card);border:1px solid var(--line);font-size:13px;font-weight:600;white-space:nowrap}
+  .chip .ic{font-size:17px}
+  .chip small{color:var(--muted);font-weight:600;font-size:11px}
+  .chip.on{background:color-mix(in srgb,var(--c) 30%,var(--card));border-color:var(--c)}
+  .chip.on small{color:var(--ink)}
+  body.tab-log .wk-head{display:none}
+  input,select,textarea{-webkit-user-select:text;user-select:text;font:inherit}
+  .lg-head{margin:14px 2px 12px}
+  .lg-head h2{margin:0;font-size:22px;font-weight:850}
+  .lg-head p{margin:3px 0 0;font-size:13px;color:var(--muted)}
+  .lg-new{width:100%;padding:14px;border-radius:14px;background:var(--accent);color:#17241f;font-weight:800;font-size:15px;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:var(--shadow)}
+  .lg-empty{text-align:center;color:var(--muted);font-size:13.5px;padding:26px 12px;line-height:1.5}
+  .lg-empty .big{font-size:40px;display:block;margin-bottom:6px}
+  .wo{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);margin-top:12px;box-shadow:var(--shadow);overflow:hidden}
+  .wo.open{border-color:rgba(84,195,155,.5)}
+  .wo-h{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px 12px 4px}
+  .wo-h input,.wo-h select,.exr input{width:100%;font-size:16px;color:var(--ink);background:var(--card-2);border:1px solid var(--line);border-radius:10px;padding:10px;appearance:none;-webkit-appearance:none;min-width:0}
+  .wo-h input{color-scheme:dark}
+  .wo-h select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23a09d94' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:30px}
+  .wo-h select.unset{color:var(--muted)}
+  .wo-lbl{grid-column:1/-1;font-size:12.5px;font-weight:700;color:var(--muted);margin-top:2px}
+  .wo-lbl b{color:var(--accent)}
+  .exl{padding:4px 12px 0}
+  .exr{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) 38px;gap:6px;padding:10px 0;border-bottom:1px dashed var(--line);position:relative}
+  .exr .no{position:absolute;left:-2px;top:-2px;font-size:10px;font-weight:800;color:var(--muted)}
+  .exr .nm{grid-column:1/4;font-weight:600}
+  .exr .rm{width:38px;height:42px;border-radius:10px;background:var(--card-2);color:var(--muted);font-size:15px}
+  .nf{position:relative;display:block}
+  .nf input{padding-right:46px;text-align:right;font-variant-numeric:tabular-nums;font-weight:700}
+  .nf span{position:absolute;right:9px;top:50%;transform:translateY(-50%);font-size:11px;font-weight:700;color:var(--muted);pointer-events:none}
+  .addr{width:calc(100% - 24px);margin:10px 12px 0;padding:11px;border-radius:10px;border:1.5px dashed var(--line);color:var(--accent);font-weight:700;font-size:14px}
+  .wo-f{display:flex;align-items:center;gap:6px;padding:12px;flex-wrap:wrap}
+  .wo-f .sum{flex:1 1 100%;font-size:12.5px;color:var(--muted);margin-bottom:4px}
+  .wo-f .sum b{color:var(--ink)}
+  .wo-f button{flex:1;padding:10px 6px;border-radius:10px;background:var(--card-2);font-size:13px;font-weight:700}
+  .wo-f .done{background:var(--accent);color:#17241f}
+  .wo-f .del{color:var(--danger)}
+  .wo-f .del.armed{background:var(--danger);color:#fff;flex:1.6}
+  .sugg{grid-column:1/-1;display:flex;flex-direction:column;background:var(--bg);border:1px solid var(--accent);border-radius:10px;overflow:hidden;margin:-2px 0 2px}
+  .sugg div{display:flex;align-items:center;border-top:1px solid var(--line)}
+  .sugg div:first-child{border-top:0}
+  .sugg .pick{flex:1;text-align:left;padding:11px 12px;font-size:15px;font-weight:600}
+  .sugg .pick mark{background:none;color:var(--accent)}
+  .sugg .forget{width:40px;align-self:stretch;color:#77746c;font-size:13px}
+  .wo-c{padding:12px 14px;display:block;width:100%;text-align:left}
+  .wo-c .t{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px}
+  .wo-c .t b{font-size:15px}
+  .wo-c .t .fp{font-size:11.5px;font-weight:800;padding:3px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+  .wo-c .ln{display:flex;justify-content:space-between;gap:10px;font-size:13.5px;padding:3px 0;color:#d8d6ce}
+  .wo-c .ln span:last-child{color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+  .wo-c .ft{margin-top:6px;font-size:12px;color:var(--muted);display:flex;justify-content:space-between}
+  .wo-c .ft i{font-style:normal;color:var(--accent);font-weight:700}
+  .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:10;max-width:560px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr 1fr;
+          background:rgba(38,38,36,.94);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:6px 10px calc(6px + env(safe-area-inset-bottom))}
+  .tabbar button{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0;border-radius:12px;font-size:11.5px;font-weight:700;color:var(--muted)}
+  .tabbar button .ti{font-size:21px;line-height:1.1;filter:grayscale(1);opacity:.7;transition:transform .2s}
+  .tabbar button.on{color:var(--accent);background:var(--accent-soft)}
+  .tabbar button.on .ti{filter:none;opacity:1;transform:translateY(-1px) scale(1.08)}
+  .glink{display:inline-block;margin-left:6px;padding:2px 8px;border-radius:7px;background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:12px}
+
+  /* ---------- guide ---------- */
+  .hero{border-radius:20px;border:1px solid color-mix(in srgb,var(--c) 50%,transparent);
+        background:linear-gradient(165deg,color-mix(in srgb,var(--c) 36%,var(--card)) 0%,var(--card) 75%);padding:16px;margin-top:4px;box-shadow:var(--shadow);overflow:hidden}
+  .h-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+  .h-day{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.6px;color:color-mix(in srgb,var(--c) 60%,#fff)}
+  .hero h2{margin:2px 0 8px;font-size:25px;font-weight:850;line-height:1.1}
+  .pills{display:flex;flex-wrap:wrap;gap:6px}
+  .pills span{font-size:11.5px;font-weight:700;padding:4px 9px;border-radius:999px;background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.1)}
+  .h-emo{width:58px;height:58px;border-radius:18px;display:grid;place-items:center;background:rgba(0,0,0,.25);flex:none}
+  .h-emo .ic{font-size:34px}
+  .figbox{position:relative;height:150px;margin:12px -4px 4px;border-radius:14px;background:rgba(0,0,0,.18)}
+  .goal{margin:12px 0 0;font-size:14.5px;line-height:1.5}
+  .goal b{color:color-mix(in srgb,var(--c) 55%,#fff)}
+  .gsec{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin-top:12px;box-shadow:var(--shadow)}
+  .gsec h3{margin:0 0 10px;font-size:12.5px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;display:flex;justify-content:space-between;gap:8px}
+  .gsec h3 span{color:color-mix(in srgb,var(--c) 60%,#fff);text-transform:none;letter-spacing:0}
+  .gsec p{margin:0;font-size:14px;line-height:1.5}
+  .gsec p+p{margin-top:8px}
+  .lst{margin:0;padding:0;list-style:none}
+  .lst li{position:relative;padding:0 0 7px 16px;font-size:14px;line-height:1.45}
+  .lst li:before{content:"";position:absolute;left:2px;top:8px;width:6px;height:6px;border-radius:50%;background:var(--c)}
+  .lst li:last-child{padding-bottom:0}
+  .rows .r{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px}
+  .rows .r:first-child{padding-top:0}
+  .rows .r:last-child{border-bottom:0;padding-bottom:0}
+  .rows .r b{font-variant-numeric:tabular-nums;white-space:nowrap;font-size:13px;padding:2px 8px;border-radius:7px;background:color-mix(in srgb,var(--c) 20%,var(--card-2))}
+  .wknow{font-size:14px;line-height:1.5}
+  .wknow b{color:color-mix(in srgb,var(--c) 55%,#fff)}
+  .wkstrip{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:4px;margin-top:10px}
+  .wkstrip div{height:30px;border-radius:7px;display:grid;place-items:center;font-size:10.5px;font-weight:800}
+  .wkstrip .o{background:rgba(84,195,155,.28);color:#bfeedd}
+  .wkstrip .i{background:#141413;color:#ecebe3;border:1px solid #55534e}
+  .wkstrip .d{background:#55534e;color:#d6d3ca}
+  .wkstrip .now{outline:2px solid var(--c);outline-offset:1px}
+  .legend{display:flex;gap:12px;margin-top:8px;font-size:11px;color:var(--muted)}
+  .legend i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:4px;vertical-align:-1px}
+  .ex{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);margin-top:12px;overflow:hidden;box-shadow:var(--shadow)}
+  .ex .figbox{margin:0;border-radius:0;height:138px;background:color-mix(in srgb,var(--c) 13%,var(--card-2))}
+  .ex .tags{position:absolute;top:8px;right:8px;display:flex;flex-wrap:wrap;justify-content:flex-end;gap:4px;max-width:70%}
+  .ex .tags span{font-size:10.5px;font-weight:800;padding:3px 7px;border-radius:7px;background:rgba(0,0,0,.55);color:#fff}
+  .ex .bd{padding:12px 14px 14px}
+  .ex h4{margin:0 0 10px;font-size:17px;font-weight:800}
+  .steps{margin:0 0 12px;padding:0;list-style:none;counter-reset:s}
+  .steps li{counter-increment:s;position:relative;padding:0 0 8px 30px;font-size:14px;line-height:1.45}
+  .steps li:before{content:counter(s);position:absolute;left:0;top:0;width:21px;height:21px;border-radius:50%;background:var(--c);color:#1c1c1a;font-size:12px;font-weight:800;display:grid;place-items:center}
+  .meta{display:grid;gap:8px}
+  .meta div{font-size:13px;line-height:1.45;padding:9px 10px;border-radius:10px;background:var(--card-2)}
+  .meta div b{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);margin-bottom:2px}
+  .meta .av b{color:#e8907e}
+  .alts{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+  .alts div{display:flex;gap:8px;font-size:13px;line-height:1.4;align-items:baseline}
+  .alts em{flex:none;font-style:normal;font-size:10.5px;font-weight:800;text-transform:uppercase;padding:2px 7px;border-radius:6px;background:color-mix(in srgb,var(--c) 22%,var(--card-2))}
+  .gnote{margin:14px 4px 0;font-size:11.5px;color:var(--muted);line-height:1.5;text-align:center}
+  .mob{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .mt{background:var(--card-2);border-radius:12px;overflow:hidden}
+  .mf{position:relative;height:84px;background:color-mix(in srgb,var(--c) 13%,var(--card-2))}
+  .mn{position:absolute;left:6px;top:6px;width:19px;height:19px;border-radius:50%;background:var(--c);color:#1c1c1a;font-size:11px;font-weight:800;display:grid;place-items:center}
+  .mtx{padding:7px 9px 9px;font-size:12.5px;line-height:1.3}
+  .mtx b{display:block;font-size:13px}
+  .mtx .md{display:block;color:color-mix(in srgb,var(--c) 55%,#fff);font-weight:700;font-size:12px;margin-top:1px}
+  .mtx small{display:block;color:var(--muted);font-size:11.5px;margin-top:2px}
+  .hk{font-style:normal;display:inline-block;min-width:28px;text-align:center;font-size:10.5px;font-weight:800;padding:2px 5px;border-radius:6px;margin-right:8px}
+  .hk.o{background:rgba(84,195,155,.28);color:#bfeedd}.hk.i{background:#141413;color:#ecebe3;border:1px solid #55534e}.hk.d{background:#55534e;color:#d6d3ca}
+  .prog .r{font-size:13px;padding:7px 0}
+  .prog .r b{font-size:12px;white-space:normal;text-align:right}
+  .ramp{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .ramp div{background:var(--card-2);border-radius:12px;padding:10px;font-size:13px;line-height:1.4}
+  .ramp b{display:block;font-size:14px;margin-bottom:2px}
+  .ramp b i{font-style:normal;color:var(--c);margin-right:4px}
+  .chart{width:100%;height:auto;display:block;margin-top:4px}
+  .xlink{display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:8px 12px;border-radius:10px;background:var(--card-2);font-size:13px;font-weight:700}
+
+  /* stick figures */
+  .fig{position:absolute;inset:0;width:100%;height:100%;display:block}
+  .fig .near,.fig .far{fill:none;stroke-linecap:round;stroke-linejoin:round}
+  .fig .near{stroke:var(--ink);stroke-width:4.4}
+  .fig .far{stroke:#7a776f;stroke-width:4}
+  .fig .hd{fill:var(--ink)}
+  .fig .pr{fill:none;stroke:#6f6c65;stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round}
+  .fig .gnd{stroke:#5a5852;stroke-width:2;stroke-linecap:round}
+  .fig .plate{fill:var(--ink)}
+  .fig .hole{fill:#3a3a37}
+  .fig .db{fill:var(--ink)}
+  .fig .rope{stroke:#a09d94;stroke-width:1.3;stroke-dasharray:3 2}
+  .fig .rkl{stroke:var(--ink);stroke-width:2.4;stroke-linecap:round}
+  .fig .rk{fill:none;stroke:var(--ink);stroke-width:2.2}
+  .fig .zz{fill:#a09d94;font:700 9px sans-serif;animation:zfloat 3s ease-in-out infinite}
+  .fig .zz:nth-of-type(2){animation-delay:-1s}.fig .zz:nth-of-type(3){animation-delay:-2s}
+  @keyframes zfloat{0%{opacity:0;transform:translate(0,4px)}40%{opacity:1}100%{opacity:0;transform:translate(6px,-10px)}}
+
+  @media (prefers-reduced-motion:reduce){
+    .fig .zz{animation:none!important}
+    .ic,.plus,.z{animation:none!important}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="top">
+    <h1>Spor Takvimi<small id="sub"></small></h1>
+    <button class="gear" id="btnSet" aria-label="Ayarlar ve yedek">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </button>
+  </div>
+  <div class="wk-head"><span>Pzt</span><span>Sal</span><span>Çar</span><span>Per</span><span>Cum</span><span class="we">Cmt</span><span class="we">Paz</span></div>
+  <div class="chips" id="chips"></div>
+</header>
+
+<div class="wrap view" id="viewGuide"><div id="guide"></div></div>
+<div class="wrap view" id="viewLog"><div id="log"></div></div>
+
+<div class="wrap view on" id="viewCal">
+  <div class="banner" id="bkBanner"><span id="bkBannerTxt"></span><button id="bkBannerBtn">Yedek al</button></div>
+  <div id="weeks"></div>
+
+  <div class="card stats">
+    <h2>Geçmiş</h2>
+    <div class="big">
+      <div><b id="stWeek">0</b><span>bu hafta</span></div>
+      <div><b id="stStreak">0</b><span>gün seri</span></div>
+      <div><b id="stTotal">0</b><span>toplam spor</span></div>
+    </div>
+    <div class="seg" id="seg">
+      <button data-r="month" class="on">Bu ay</button>
+      <button data-r="all">Tümü</button>
+    </div>
+    <div class="bars" id="bars"></div>
+  </div>
+</div>
+
+<nav class="tabbar">
+  <button data-tab="cal" class="on"><span class="ti">📅</span>Takvim</button>
+  <button data-tab="log"><span class="ti">🏋️</span>Antrenman</button>
+  <button data-tab="guide"><span class="ti">📖</span>Rehber</button>
+</nav>
+
+<!-- day picker -->
+<div class="bg" id="bg"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true">
+  <div class="grab"></div>
+  <div class="sh-top"><h3 id="shTitle"></h3><button class="x" id="shClose" aria-label="Kapat">✕</button></div>
+  <div class="sh-sub" id="shSub"></div>
+  <div class="grp">Huberman planı</div>
+  <div class="opts" id="optsPlan"></div>
+  <div class="grp">Sporlar</div>
+  <div class="opts" id="optsSport"></div>
+  <button class="clear" id="shClear">Bu günü temizle</button>
+</div>
+
+<!-- settings -->
+<div class="sheet" id="setSheet" role="dialog" aria-modal="true">
+  <div class="grab"></div>
+  <div class="sh-top"><h3>Yedek</h3><button class="x" id="setClose" aria-label="Kapat">✕</button></div>
+  <p class="note" id="bkInfo"></p>
+  <button class="sbtn" id="btnExport"><span class="e">💾</span>Yedek dosyası kaydet</button>
+  <button class="sbtn" id="btnImport"><span class="e">📂</span>Yedek dosyasından geri yükle</button>
+  <input type="file" id="fileImport" accept="application/json,.json" hidden>
+  <div class="grp">Otomatik yedekler (bu telefonda)</div>
+  <div id="snapList"></div>
+</div>
+
+<script>
+/* ---------- Config ---------- */
+const KEY="sporTakvim.v1", SNAP_KEY="sporTakvim.snaps", BK_KEY="sporTakvim.lastFile";
+const START="2026-11-21";
+const FOCUS=[["gogus","Göğüs"],["sirt","Sırt"],["omuz","Omuz"],["kol","Kol"],["karin","Karın"],["bacak","Bacak & kalça"],
+  ["ust","Üst vücut"],["alt","Alt vücut"],["itis","İtiş"],["cekis","Çekiş"],["tum","Tüm vücut"]];
+const PLACES={ev:{n:"Ev",e:"🏠"},gym:{n:"Gym",e:"🏢"},acik:{n:"Açık hava",e:"🌳"}};
+const SPORTS=[
+  {id:"alt",  g:"plan", n:"Alt vücut kuvvet",   e:"🦵", c:"#e5484d", a:"squat", d:"Squat, RDL, lunge, farmer's carry"},
+  {id:"topar",g:"plan", n:"Toparlanma",         e:"🧖", c:"#f78c6b", a:"steam", d:"Sauna, soğuk, NSDR, mobilite"},
+  {id:"ust",  g:"plan", n:"Üst vücut",          e:"💪", c:"#f0b429", a:"flex",  d:"Barfiks, press, row, face pull"},
+  {id:"aero", g:"plan", n:"Hafif aerobik",      e:"🚣", c:"#7cb342", a:"row",   d:"Hafif tempo, darbesiz alet + McGill"},
+  {id:"n44",  g:"plan", n:"Norveç 4×4",         e:"🫀", c:"#6e56cf", a:"beat",  d:"4×4 aralık + core"},
+  {id:"z2",   g:"plan", n:"Uzun Bölge",         e:"🌊", c:"#b65fd6", a:"wave",  d:"Sahilde uzun, sakin tempo"},
+  {id:"agirlik",g:"spor",n:"Ağırlık",           e:"🏋️", c:"#c96442", a:"lift",  places:["ev","gym","acik"]},
+  {id:"kosu", g:"spor", n:"Koşu",               e:"🏃", c:"#2fb5a6", a:"run",   places:["gym","acik"]},
+  {id:"bisiklet",g:"spor",n:"Bisiklet",         e:"🚴", c:"#4f7cff", a:"pedal", places:["gym","acik"]},
+  {id:"basket",g:"spor",n:"Basketbol",          e:"🏀", c:"#f28c28", a:"bounce"},
+  {id:"tenis",g:"spor", n:"Tenis",              e:"🎾", c:"#b5d334", a:"tennis"},
+  {id:"yuzme",g:"spor", n:"Yüzme",              e:"🏊", c:"#1fa3d6", a:"swim"},
+  {id:"box",  g:"spor", n:"Box / Kickbox",      e:"🥊", c:"#d6336c", a:"punch"},
+  {id:"ip",   g:"spor", n:"İp atlama",          e:"🪢", c:"#e8a33d", a:"jump"}
+];
+const BY={};SPORTS.forEach(s=>BY[s.id]=s);
+/* Huberman haftası: getDay() 0=Paz ... 6=Cmt */
+const MONTHS=["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
+const MON3=["Oca","Şub","Mar","Nis","May","Haz","Tem","Ağu","Eyl","Eki","Kas","Ara"];
+const DOWN=["Pazar","Pazartesi","Salı","Çarşamba","Perşembe","Cuma","Cumartesi"];
+
+/* ---------- Dates ---------- */
+const $=id=>document.getElementById(id);
+const p2=n=>String(n).padStart(2,"0");
+const ymd=d=>d.getFullYear()+"-"+p2(d.getMonth()+1)+"-"+p2(d.getDate());
+const parse=k=>{const a=k.split("-");return new Date(+a[0],+a[1]-1,+a[2]);};
+const addDays=(d,n)=>{const x=new Date(d);x.setDate(x.getDate()+n);return x;};
+const mondayOf=d=>{const x=new Date(d.getFullYear(),d.getMonth(),d.getDate());const w=(x.getDay()+6)%7;x.setDate(x.getDate()-w);return x;};
+const todayKey=()=>ymd(new Date());
+
+/* ---------- Storage ---------- */
+function blank(){return {v:1,start:START,days:{},workouts:[],names:[]};}
+function cleanNames(a,workouts){
+  const seen=new Set(),out=[];
+  const add=n=>{n=String(n||"").trim().slice(0,80);const k=n.toLocaleLowerCase("tr");if(n&&!seen.has(k)){seen.add(k);out.push(n);}};
+  (Array.isArray(a)?a:[]).forEach(add);
+  workouts.forEach(w=>w.rows.forEach(r=>add(r.n)));
+  return out.slice(0,400);
+}
+function cleanWorkouts(a){
+  if(!Array.isArray(a))return [];
+  return a.filter(w=>w&&typeof w==="object"&&/^\d{4}-\d{2}-\d{2}$/.test(w.date)).map(w=>({
+    id:String(w.id||("w"+Date.now()+Math.random().toString(36).slice(2,6))),date:w.date,focus:FOCUS.some(f=>f[0]===w.focus)?w.focus:"",
+    ts:+w.ts||Date.now(),rows:(Array.isArray(w.rows)?w.rows:[]).map(r=>({n:String(r&&r.n||"").slice(0,80),s:String(r&&r.s||"").slice(0,6),r:String(r&&r.r||"").slice(0,10),w:String(r&&r.w||"").slice(0,8)}))}));
+}
+function clean(o){
+  if(!o||typeof o!=="object"||!o.days||typeof o.days!=="object")return blank();
+  const out={v:1,start:START,days:{},workouts:cleanWorkouts(o.workouts)};
+  out.names=cleanNames(o.names,out.workouts);
+  for(const k in o.days){const e=o.days[k];if(e&&BY[e.s]&&/^\d{4}-\d{2}-\d{2}$/.test(k)){out.days[k]={s:e.s,ts:e.ts||Date.now()};if(e.p&&PLACES[e.p])out.days[k].p=e.p;}}
+  return out;
+}
+function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&s.days)return clean(s);}catch(e){}return blank();}
+let state=load(), saveWarned=false;
+function save(){
+  try{localStorage.setItem(KEY,JSON.stringify(state));}
+  catch(e){if(!saveWarned){saveWarned=true;alert("Tarayıcı kayıt yapmaya izin vermiyor. Sayfayı normal bir web bağlantısından aç (dosya önizlemesinden değil) ya da Yedek bölümünden dosya kaydet.");}}
+  snapshot(false);
+}
+try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist();}catch(e){}
+
+/* ---------- Icons ---------- */
+function icon(s,delay){return '<span class="ic a-'+s.a+'" style="animation-delay:'+(delay||0)+'s">'+s.e+'</span>';}
+function delayFor(key){let h=0;for(const ch of key)h=(h*31+ch.charCodeAt(0))%997;return -((h%20)/10);}
+
+/* ---------- Calendar ---------- */
+function render(){
+  const tk=todayKey(), today=parse(tk), start=parse(state.start);
+  const wrap=$("weeks");wrap.innerHTML="";
+  let w=mondayOf(today), first=mondayOf(start), idx=Math.round((w-first)/(7*864e5))+1, lastMonth="";
+  $("sub").textContent=today.getDate()+" "+MONTHS[today.getMonth()]+" "+DOWN[today.getDay()];
+  while(w>=first){
+    const sun=addDays(w,6);
+    const mLabel=MONTHS[sun.getMonth()]+" "+sun.getFullYear();
+    if(mLabel!==lastMonth){const m=document.createElement("div");m.className="month";m.textContent=mLabel;wrap.appendChild(m);lastMonth=mLabel;}
+    const card=document.createElement("div");card.className="week"+(idx===Math.round((mondayOf(today)-first)/(7*864e5))+1?" cur":"");
+    let done=0,elig=0;
+    const grid=document.createElement("div");grid.className="days";
+    for(let i=0;i<7;i++){
+      const d=addDays(w,i),k=ymd(d),b=document.createElement("button");
+      b.className="day";b.dataset.k=k;
+      if(d<start){b.classList.add("blank");b.tabIndex=-1;grid.appendChild(b);continue;}
+      const e=state.days[k];
+      let inner='<span class="dn">'+d.getDate()+'</span><span class="slot">';
+      if(d>today){b.classList.add("future");b.disabled=true;inner+='</span>';}
+      else{
+        elig++;
+        if(k===tk)b.classList.add("today");
+        if(e){
+          const s=BY[e.s];done++;b.classList.add("logged");b.style.setProperty("--c",s.c);
+          inner+=icon(s,delayFor(k))+'</span>';
+          if(e.p)inner+='<span class="pl">'+PLACES[e.p].e+'</span>';
+          b.setAttribute("aria-label",d.getDate()+" "+MONTHS[d.getMonth()]+": "+s.n+(e.p?" ("+PLACES[e.p].n+")":""));
+        }else if(k===tk){b.classList.add("open");inner+='<span class="plus">+</span></span>';b.setAttribute("aria-label","Bugün: spor seç");}
+        else{b.classList.add("empty");inner+='<span><span class="z">💤</span>boş<br>gün</span></span>';b.setAttribute("aria-label",d.getDate()+" "+MONTHS[d.getMonth()]+": boş gün");}
+        b.onclick=()=>openDay(k);
+      }
+      b.innerHTML=inner;grid.appendChild(b);
+    }
+    const sunTxt=sun.getDate()+" "+MON3[sun.getMonth()], monTxt=w.getDate()+(w.getMonth()!==sun.getMonth()?" "+MON3[w.getMonth()]:"");
+    card.innerHTML='<div class="wtitle"><span><b>Hafta '+idx+'</b> · '+monTxt+'–'+sunTxt+'</span><span class="cnt"><i>'+done+'</i> / '+elig+' gün</span></div>';
+    card.appendChild(grid);wrap.appendChild(card);
+    w=addDays(w,-7);idx--;
+  }
+  renderStats();renderBackupInfo();
+}
+
+/* ---------- Stats ---------- */
+let range="month";
+function renderStats(){
+  const tk=todayKey(), today=parse(tk), mon=mondayOf(today);
+  let wk=0,total=0;
+  for(const k in state.days){total++;const d=parse(k);if(d>=mon&&d<=today)wk++;}
+  $("stWeek").textContent=wk;$("stTotal").textContent=total;
+  /* seri: bugünden (bugün boşsa dünden) geriye kesintisiz spor günleri */
+  let d=state.days[tk]?today:addDays(today,-1),st=0;
+  while(state.days[ymd(d)]){st++;d=addDays(d,-1);}
+  $("stStreak").textContent=st;
+  const cnt={};let max=0;
+  const mPrefix=tk.slice(0,7);
+  for(const k in state.days){if(range==="month"&&k.slice(0,7)!==mPrefix)continue;const s=state.days[k].s;cnt[s]=(cnt[s]||0)+1;max=Math.max(max,cnt[s]);}
+  const list=SPORTS.filter(s=>cnt[s.id]).sort((a,b)=>cnt[b.id]-cnt[a.id]);
+  const bars=$("bars");
+  if(!list.length){bars.innerHTML='<div class="nodata">'+(range==="month"?"Bu ay henüz spor girilmedi.":"Henüz spor girilmedi.")+' Bir güne dokun, sporu seç.</div>';return;}
+  bars.innerHTML=list.map(s=>'<div class="bar" style="--c:'+s.c+'">'+icon(s,0)+'<div class="tr"><div class="fl" style="width:'+Math.max(8,cnt[s.id]/max*100)+'%"></div><span class="nm">'+s.n+'</span></div><span class="n">'+cnt[s.id]+'</span></div>').join("");
+}
+$("seg").onclick=e=>{const b=e.target.closest("button");if(!b)return;range=b.dataset.r;document.querySelectorAll("#seg button").forEach(x=>x.classList.toggle("on",x===b));renderStats();};
+
+/* ---------- Day picker ---------- */
+let curKey=null;
+function optHTML(s,sel,plan){
+  return '<button class="opt'+(sel?' sel':'')+'" data-s="'+s.id+'" style="--c:'+s.c+'">'+
+    (plan?'<span class="tag">Plan</span>':'')+(s.places?'<span class="pin">📍</span>':'')+
+    '<span class="badge">'+icon(s,-Math.random())+'</span><span class="lb">'+s.n+'</span></button>';
+}
+function openDay(k){
+  curKey=k;const d=parse(k),e=state.days[k];
+  $("shTitle").textContent=d.getDate()+" "+MONTHS[d.getMonth()]+", "+DOWN[d.getDay()];
+  $("shSub").textContent=e?"Değiştirmek için başka bir spora dokun.":(k===todayKey()?"Bugün ne yaptın?":"Bu gün ne yaptın?");
+  const build=(g,el)=>{
+    el.innerHTML="";
+    SPORTS.filter(s=>s.g===g).forEach((s,i,arr)=>{
+      el.insertAdjacentHTML("beforeend",optHTML(s,e&&e.s===s.id,false));
+    });
+  };
+  build("plan",$("optsPlan"));build("spor",$("optsSport"));
+  $("shClear").style.display=e?"block":"none";
+  [$("optsPlan"),$("optsSport")].forEach(el=>el.onclick=onPick);
+  if(e&&BY[e.s].places)showPlaces(BY[e.s],e.p);
+  openSheet($("sheet"));
+}
+function onPick(ev){
+  const pb=ev.target.closest(".pbtn");
+  if(pb){commit(pb.dataset.s,pb.dataset.p);return;}
+  const b=ev.target.closest(".opt");if(!b)return;
+  const s=BY[b.dataset.s];
+  document.querySelectorAll(".opt").forEach(x=>x.classList.toggle("sel",x===b));
+  if(s.places){const e=state.days[curKey];showPlaces(s,e&&e.s===s.id?e.p:null);buzz();return;}
+  commit(s.id);
+}
+function showPlaces(s,selP){
+  document.querySelectorAll(".places").forEach(x=>x.remove());
+  const btn=document.querySelector('.opt[data-s="'+s.id+'"]');if(!btn)return;
+  const grid=btn.parentElement, cols=3, items=[...grid.children], pos=items.indexOf(btn);
+  const rowEnd=Math.min(items.length-1,Math.floor(pos/cols)*cols+cols-1);
+  const box=document.createElement("div");box.className="places on";
+  box.innerHTML='<div class="q">'+s.e+' '+s.n+' nerede?</div>'+s.places.map(p=>'<button class="pbtn'+(selP===p?' sel':'')+'" data-s="'+s.id+'" data-p="'+p+'"><span class="pe">'+PLACES[p].e+'</span>'+PLACES[p].n+'</button>').join("");
+  if(s.places.length===2)box.style.gridTemplateColumns="repeat(2,1fr)";
+  items[rowEnd].after(box);
+}
+function commit(sid,place){
+  const e={s:sid,ts:Date.now()};if(place)e.p=place;
+  state.days[curKey]=e;save();buzz();
+  const k=curKey;closeSheets();render();celebrate(k);
+}
+$("shClear").onclick=()=>{if(!curKey)return;delete state.days[curKey];save();closeSheets();render();};
+function buzz(){try{navigator.vibrate&&navigator.vibrate(12);}catch(e){}}
+function celebrate(k){
+  const cell=document.querySelector('.day[data-k="'+k+'"]');if(!cell)return;
+  cell.classList.remove("pop");void cell.offsetWidth;cell.classList.add("pop");
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+  const s=BY[state.days[k].s],r=cell.getBoundingClientRect();
+  for(let i=0;i<7;i++){
+    const f=document.createElement("span");f.className="fly";f.textContent=i%2?s.e:"✨";
+    f.style.left=(r.left+r.width/2-9)+"px";f.style.top=(r.top+r.height/2-9)+"px";document.body.appendChild(f);
+    const ang=Math.PI*2*i/7-Math.PI/2,dist=38+Math.random()*22;
+    f.animate([{transform:"translate(0,0) scale(.4)",opacity:1},{transform:"translate("+Math.cos(ang)*dist+"px,"+Math.sin(ang)*dist+"px) scale(1)",opacity:0}],{duration:700+Math.random()*200,easing:"cubic-bezier(.2,.8,.3,1)"}).onfinish=()=>f.remove();
+  }
+}
+
+/* ---------- Sheets ---------- */
+function openSheet(el){$("bg").classList.add("on");el.classList.add("on");el.scrollTop=0;}
+function closeSheets(){$("bg").classList.remove("on");document.querySelectorAll(".sheet").forEach(x=>x.classList.remove("on"));curKey=null;}
+$("bg").onclick=closeSheets;$("shClose").onclick=closeSheets;$("setClose").onclick=closeSheets;
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeSheets();});
+/* swipe down to close */
+document.querySelectorAll(".sheet").forEach(sh=>{
+  let y0=null;
+  sh.addEventListener("touchstart",e=>{y0=sh.scrollTop<=0?e.touches[0].clientY:null;},{passive:true});
+  sh.addEventListener("touchmove",e=>{if(y0===null)return;const dy=e.touches[0].clientY-y0;if(dy>0){sh.style.transition="none";sh.style.transform="translateY("+dy+"px)";}},{passive:true});
+  sh.addEventListener("touchend",e=>{if(y0===null)return;const dy=e.changedTouches[0].clientY-y0;sh.style.transition="";sh.style.transform="";if(dy>90)closeSheets();y0=null;});
+});
+
+/* ---------- Backups ---------- */
+function getSnaps(){try{const a=JSON.parse(localStorage.getItem(SNAP_KEY));return Array.isArray(a)?a:[];}catch(e){return [];}}
+function snapshot(force){
+  try{
+    let snaps=getSnaps();const data=JSON.stringify(state),last=snaps[snaps.length-1];
+    if(last&&last.data===data)return;
+    if(!force&&last&&Date.now()-last.ts<36e5)return;
+    snaps.push({ts:Date.now(),data});
+    const keep=[],days={},now=Date.now();
+    for(let i=snaps.length-1;i>=0;i--){const s=snaps[i];
+      if(now-s.ts<24*36e5){if(keep.length<24)keep.push(s);continue;}
+      const d=ymd(new Date(s.ts));if(!days[d]&&Object.keys(days).length<30){days[d]=1;keep.push(s);}}
+    snaps=keep.reverse();
+    for(let i=0;i<10;i++){try{localStorage.setItem(SNAP_KEY,JSON.stringify(snaps));break;}catch(e){if(snaps.length<=1)break;snaps.shift();}}
+  }catch(e){}
+}
+function ago(ts){const m=Math.round((Date.now()-ts)/6e4);if(m<1)return "az önce";if(m<60)return m+" dk önce";const h=Math.round(m/60);if(h<24)return h+" saat önce";return Math.round(h/24)+" gün önce";}
+function lastFile(){try{return +(localStorage.getItem(BK_KEY)||0);}catch(e){return 0;}}
+function renderBackupInfo(){
+  const lb=lastFile(),sn=getSnaps(),n=Object.keys(state.days).length+state.workouts.length;
+  $("bkInfo").innerHTML="Her seçim anında bu telefona kaydedilir. Otomatik yedek: "+sn.length+" adet"+(sn.length?" (son: "+ago(sn[sn.length-1].ts)+")":"")+
+    ".<br>Son yedek dosyası: "+(lb?ago(lb):"hiç")+". Tarayıcı verisi silinirse ya da telefon değişirse yalnızca yedek dosyası kurtarır.";
+  const due=n>=3&&(!lb||Date.now()-lb>14*864e5);
+  $("bkBanner").classList.toggle("on",due);
+  $("bkBannerTxt").textContent=lb?"Son yedek dosyası "+ago(lb)+". Yenisini kaydet.":"Henüz yedek dosyası yok. Tek dokunuş.";
+}
+function exportBackup(){
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="spor-takvimi-yedek-"+todayKey()+".json";
+  document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+  try{localStorage.setItem(BK_KEY,String(Date.now()));}catch(e){}
+  renderBackupInfo();
+}
+function restoreFrom(obj){snapshot(true);state=clean(obj);try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}closeSheets();render();}
+$("btnExport").onclick=exportBackup;$("bkBannerBtn").onclick=exportBackup;
+$("btnImport").onclick=()=>$("fileImport").click();
+$("fileImport").onchange=e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{const s=JSON.parse(rd.result);if(!s.days)throw 0;if(confirm("Bu yedek geri yüklensin mi? Mevcut verinin yerine geçer (mevcut veri önce otomatik yedeğe alınır)."))restoreFrom(s);}catch(err){alert("Bu dosya okunamadı.");}e.target.value="";};rd.readAsText(f);};
+function renderSnaps(){
+  const list=$("snapList"),snaps=getSnaps().slice().reverse();
+  if(!snaps.length){list.innerHTML='<p class="note">Henüz otomatik yedek yok. İlk spor girişinde oluşur.</p>';return;}
+  list.innerHTML="";
+  snaps.forEach(sn=>{
+    let info="";try{const o=JSON.parse(sn.data);info=Object.keys(o.days).length+" gün · "+((o.workouts||[]).length)+" antrenman";}catch(e){info="okunamadı";}
+    const row=document.createElement("div");row.className="snap";
+    row.innerHTML='<div>'+new Date(sn.ts).toLocaleString("tr-TR",{weekday:"short",day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})+'<small>'+info+'</small></div>';
+    const b=document.createElement("button");b.textContent="Geri yükle";
+    b.onclick=()=>{if(confirm("Bu otomatik yedek geri yüklensin mi?")){try{restoreFrom(JSON.parse(sn.data));}catch(e){alert("Bu yedek okunamadı.");}}};
+    row.appendChild(b);list.appendChild(row);
+  });
+}
+$("btnSet").onclick=()=>{renderBackupInfo();renderSnaps();openSheet($("setSheet"));};
+
+/* ---------- Day rollover ---------- */
+let lastDay=todayKey();
+function tick(){if(todayKey()!==lastDay){lastDay=todayKey();if(!curKey)render();}}
+setInterval(tick,30e3);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)tick();});
+
+/* =====================================================================
+   STICK FIGURES — side view, viewBox 120×100, ground y=95
+   Joints: H head, N neck/shoulders, P pelvis, K knee, F foot, E elbow, W wrist
+   (1 = near side, 2 = far side, drawn grey). Extra keys: bar, ball, rk, sp.
+   ===================================================================== */
+const ST={H:[60,14],N:[60,23],P:[60,53],K1:[61,73],F1:[62,94],K2:[59,73],F2:[58,94],E1:[61,38],W1:[62,52],E2:[59,38],W2:[58,52]};
+const mk=(b,o)=>Object.assign({},b,o);
+const sh=(p,dx,dy)=>{const r={};for(const k in p)r[k]=[p[k][0]+dx,p[k][1]+dy];return r;};
+function ik(A,C,l1,l2,s){const dx=C[0]-A[0],dy=C[1]-A[1];let d=Math.hypot(dx,dy);d=Math.min(d,l1+l2-.01);
+  const a=(l1*l1-l2*l2+d*d)/(2*d),h=Math.sqrt(Math.max(0,l1*l1-a*a)),ux=dx/d,uy=dy/d;
+  return [A[0]+a*ux+s*h*-uy,A[1]+a*uy+s*h*ux];}
+const QUAD={N:[80,70],H:[90,66],P:[48,70],E1:[80,81],W1:[80,92],K1:[48,92],F1:[30,92],E2:[79,81],W2:[79,92],K2:[50,92],F2:[32,92]};
+const SUP={P:[46,90],N:[78,90],H:[88,89],K1:[30,91],F1:[14,92],K2:[31,90],F2:[15,91],E1:[63,92],W1:[50,93],E2:[62,91],W2:[49,92]};
+const HINGE={P:[50,54],N:[74,38],H:[82,33],K1:[58,73],F1:[59,94],K2:[56,73],F2:[57,94]};
+const RUN_A={H:[66,23],N:[64,32],P:[58,60],K1:[72,72],F1:[68,90],K2:[52,80],F2:[40,88],E1:[56,45],W1:[52,56],E2:[70,44],W2:[77,36]};
+const RUN_B=mk(RUN_A,{K1:[52,80],F1:[40,88],K2:[72,72],F2:[68,90],E1:[70,44],W1:[77,36],E2:[56,45],W2:[52,56]});
+const WALK_A=mk(ST,{K1:[64,73],F1:[70,94],K2:[56,73],F2:[50,94],E1:[56,38],W1:[53,51],E2:[64,38],W2:[68,51]});
+const WALK_B=mk(ST,{K1:[56,73],F1:[50,94],K2:[64,73],F2:[70,94],E1:[64,38],W1:[68,51],E2:[56,38],W2:[53,51]});
+function bikeFrames(){const out=[],c=[62,80],r=9,hip=[52,46];
+  for(let i=0;i<8;i++){const a=i/8*2*Math.PI,f1=[c[0]+r*Math.cos(a),c[1]+r*Math.sin(a)],f2=[c[0]-r*Math.cos(a),c[1]-r*Math.sin(a)];
+    out.push({H:[79,17],N:[72,24],P:hip,E1:[77,35],W1:[83,44],E2:[76,35],W2:[82,44],F1:f1,K1:ik(hip,f1,22,24,-1),F2:f2,K2:ik(hip,f2,22,24,-1)});}
+  return out;}
+
+const FIG={
+  squat:{t:2600,fo:"P",props:["bar"],f:[
+    mk(ST,{E1:[53,31],W1:[57,23],E2:[52,31],W2:[56,23],bar:[57,22]}),
+    mk(ST,{P:[46,70],N:[60,42],H:[64,34],K1:[66,72],F1:[61,94],K2:[64,72],F2:[59,94],E1:[53,49],W1:[58,41],E2:[52,49],W2:[57,41],bar:[58,40]})]},
+  rdl:{t:2800,fo:"P",props:["bar"],f:[
+    mk(ST,{E1:[61,38],W1:[61,52],E2:[60,38],W2:[60,52],bar:[61,54]}),
+    mk(ST,mk(HINGE,{E1:[76,52],W1:[76,66],E2:[75,52],W2:[75,66],bar:[76,68]}))]},
+  lunge:{t:2600,fo:"K1",props:["db"],f:[
+    sh(ST,14,0),
+    mk(sh(ST,14,0),{P:[56,70],N:[56,40],H:[56,31],K1:[76,73],F1:[76,94],K2:[50,90],F2:[35,93],E1:[57,55],W1:[57,69],E2:[55,55],W2:[55,69]})]},
+  carry:{t:1000,fo:"N",props:["db"],f:[
+    mk(ST,{K1:[64,73],F1:[69,94],K2:[57,73],F2:[51,94],E1:[61,38],W1:[61,53],E2:[59,38],W2:[59,53]}),
+    mk(ST,{P:[60,52],N:[60,22],H:[60,13],K1:[57,73],F1:[51,94],K2:[64,73],F2:[69,94],E1:[61,37],W1:[61,52],E2:[59,37],W2:[59,52]})]},
+  pullup:{t:2600,fo:"N",g:false,vb:"0 -10 120 116",d:'<path class="pr" d="M34 6 H86 M38 6 V-4 M82 6 V-4"/>',f:[
+    {W1:[62,6],E1:[62,21],N:[60,36],H:[60,27],P:[60,66],K1:[62,84],F1:[56,100],W2:[58,6],E2:[58,21],K2:[60,84],F2:[54,100]},
+    {W1:[62,6],E1:[69,20],N:[60,12],H:[60,0],P:[59,42],K1:[61,60],F1:[55,76],W2:[58,6],E2:[66,20],K2:[59,60],F2:[53,76]}]},
+  incline:{t:2600,fo:"N",props:["db"],d:'<path class="pr" d="M38 68 L76 84 H96 M60 76 V95 M90 84 V95"/>',f:[
+    {P:[74,76],N:[46,62],H:[38,57],K1:[92,73],F1:[95,94],K2:[90,73],F2:[93,94],E1:[47,47],W1:[48,33],E2:[45,47],W2:[46,33]},
+    {P:[74,76],N:[46,62],H:[38,57],K1:[92,73],F1:[95,94],K2:[90,73],F2:[93,94],E1:[55,74],W1:[52,60],E2:[53,74],W2:[50,60]}]},
+  dips:{t:2400,fo:"N",g:false,d:'<path class="pr" d="M44 52 H78 M50 52 V99 M72 52 V99"/>',f:[
+    {N:[60,22],H:[60,13],E1:[60,37],W1:[60,52],E2:[59,37],W2:[59,52],P:[58,52],K1:[61,70],F1:[53,84],K2:[59,70],F2:[51,84]},
+    {N:[64,38],H:[67,29],E1:[51,44],W1:[60,52],E2:[50,44],W2:[59,52],P:[57,67],K1:[62,83],F1:[52,92],K2:[60,83],F2:[50,92]}]},
+  row:{t:2200,fo:"N",props:["bar"],f:[
+    mk(HINGE,{E1:[74,52],W1:[74,66],E2:[73,52],W2:[73,66],bar:[74,68]}),
+    mk(HINGE,{E1:[58,40],W1:[66,50],E2:[57,40],W2:[65,50],bar:[66,51]})]},
+  ohp:{t:2400,fo:"N",props:["bar"],vb:"0 -16 120 114",f:[
+    mk(ST,{E1:[66,34],W1:[64,23],E2:[64,34],W2:[62,23],bar:[64,22]}),
+    mk(ST,{H:[58,14],E1:[61,9],W1:[61,-5],E2:[60,9],W2:[60,-5],bar:[61,-6]})]},
+  facepull:{t:2200,fo:"N",props:["rope"],an:[104,22],d:'<path class="pr" d="M104 2 V95"/><circle cx="104" cy="22" r="2.5" fill="#a09d94"/>',f:[
+    mk(ST,{E1:[72,25],W1:[85,24],E2:[71,25],W2:[84,24]}),
+    mk(ST,{E1:[49,21],W1:[53,8],E2:[48,21],W2:[52,8]})]},
+  medball:{t:1900,fo:"P",props:["ball"],d:'<path class="pr" d="M110 6 V95"/>',f:[
+    {P:[58,54],N:[54,25],H:[52,16],K1:[64,73],F1:[68,94],K2:[52,73],F2:[46,94],E1:[46,34],W1:[42,46],E2:[47,34],W2:[43,46],ball:[40,50]},
+    {P:[62,53],N:[66,25],H:[68,16],K1:[66,73],F1:[68,94],K2:[54,74],F2:[48,93],E1:[76,32],W1:[86,34],E2:[75,32],W2:[85,34],ball:[90,34]},
+    {P:[62,53],N:[66,25],H:[68,16],K1:[66,73],F1:[68,94],K2:[54,74],F2:[48,93],E1:[76,32],W1:[86,34],E2:[75,32],W2:[85,34],ball:[104,40]}]},
+  pallof:{t:3000,fo:"mid",props:["rope"],an:[12,40],d:'<path class="pr" d="M12 4 V95"/><circle cx="12" cy="40" r="2.5" fill="#a09d94"/>',f:[
+    mk(ST,{K1:[64,73],F1:[66,94],K2:[56,73],F2:[54,94],E1:[56,40],W1:[64,40],E2:[55,40],W2:[63,40]}),
+    mk(ST,{K1:[64,73],F1:[66,94],K2:[56,73],F2:[54,94],E1:[73,39],W1:[87,39],E2:[72,39],W2:[86,39]}),
+    mk(ST,{K1:[64,73],F1:[66,94],K2:[56,73],F2:[54,94],E1:[73,39],W1:[87,39],E2:[72,39],W2:[86,39]})]},
+  skater:{t:1700,fo:"K1",f:[
+    {P:[76,58],N:[72,30],H:[71,21],K1:[80,76],F1:[78,94],K2:[70,78],F2:[64,88],E1:[64,40],W1:[57,49],E2:[81,36],W2:[89,30]},
+    {P:[60,46],N:[60,18],H:[60,9],K1:[56,64],F1:[56,82],K2:[64,64],F2:[64,82],E1:[50,26],W1:[42,22],E2:[70,26],W2:[78,22]},
+    {P:[44,58],N:[48,30],H:[49,21],K1:[40,76],F1:[42,94],K2:[50,78],F2:[56,88],E1:[56,40],W1:[63,49],E2:[39,36],W2:[31,30]}]},
+  curlup:{t:3200,fo:"mid",vb:"0 52 120 48",f:[
+    mk(SUP,{K1:[38,76],F1:[27,93]}),
+    mk(SUP,{K1:[38,76],F1:[27,93],N:[78,86],H:[87,80]}),
+    mk(SUP,{K1:[38,76],F1:[27,93],N:[78,86],H:[87,80]})]},
+  sideplank:{t:3200,fo:"P",vb:"0 40 120 60",f:[
+    {F1:[22,92],K1:[36,90],P:[51,88],N:[80,74],H:[89,70],E1:[81,92],W1:[94,92],E2:[80,61],W2:[80,49],K2:[37,88],F2:[24,90]},
+    {F1:[22,92],K1:[37,87],P:[51,82],N:[80,74],H:[89,70],E1:[81,92],W1:[94,92],E2:[80,61],W2:[80,49],K2:[38,85],F2:[24,90]},
+    {F1:[22,92],K1:[37,87],P:[51,82],N:[80,74],H:[89,70],E1:[81,92],W1:[94,92],E2:[80,61],W2:[80,49],K2:[38,85],F2:[24,90]}]},
+  birddog:{t:3400,fo:"mid",vb:"0 44 120 56",f:[
+    QUAD, mk(QUAD,{E1:[93,68],W1:[106,66],K2:[32,70],F2:[14,70]}), mk(QUAD,{E1:[93,68],W1:[106,66],K2:[32,70],F2:[14,70]})]},
+  catcow:{t:3600,fo:"mid",vb:"0 44 120 56",f:[
+    mk(QUAD,{sp:[64,78],H:[91,61]}), mk(QUAD,{sp:[64,57],H:[87,76]})]},
+  /* mobilite akışı */
+  child:{t:4000,fo:"mid",vb:"0 50 120 50",f:[
+    {P:[42,84],K1:[56,92],F1:[36,93],K2:[55,91],F2:[35,92],N:[72,88],H:[81,89],E1:[88,92],W1:[103,92],E2:[87,91],W2:[102,91],sp:[58,82]},
+    {P:[42,82],K1:[56,92],F1:[36,93],K2:[55,91],F2:[35,92],N:[72,87],H:[81,89],E1:[88,92],W1:[103,92],E2:[87,91],W2:[102,91],sp:[58,78]}]},
+  downdog:{t:3600,fo:"P",f:[
+    {W1:[88,94],E1:[83,82],N:[77,69],H:[81,77],P:[52,42],K1:[45,67],F1:[38,94],W2:[86,94],E2:[81,82],K2:[43,67],F2:[36,94]},
+    {W1:[88,94],E1:[83,82],N:[76,70],H:[80,78],P:[50,39],K1:[44,66],F1:[38,94],W2:[86,94],E2:[81,82],K2:[42,66],F2:[36,94]}]},
+  wgs:{t:3400,fo:"P",f:[
+    {P:[54,70],K1:[74,72],F1:[78,94],K2:[40,86],F2:[24,94],N:[76,54],H:[83,49],E1:[76,68],W1:[72,82],E2:[77,62],W2:[74,76]},
+    {P:[54,70],K1:[74,72],F1:[78,94],K2:[40,86],F2:[24,94],N:[75,52],H:[78,43],E1:[76,68],W1:[72,82],E2:[74,38],W2:[73,24]},
+    {P:[54,70],K1:[74,72],F1:[78,94],K2:[40,86],F2:[24,94],N:[75,52],H:[78,43],E1:[76,68],W1:[72,82],E2:[74,38],W2:[73,24]}]},
+  lowlunge:{t:3600,fo:"P",f:[
+    {P:[56,70],K1:[76,72],F1:[78,94],K2:[44,93],F2:[26,94],N:[57,40],H:[58,31],E1:[59,26],W1:[60,12],E2:[57,26],W2:[58,12]},
+    {P:[61,72],K1:[79,72],F1:[78,94],K2:[44,93],F2:[26,94],N:[61,42],H:[61,33],E1:[62,28],W1:[62,14],E2:[60,28],W2:[60,14]}]},
+  deepsq:{t:3600,fo:"P",f:[
+    {P:[52,83],K1:[70,72],F1:[63,94],K2:[68,72],F2:[61,94],N:[63,55],H:[67,47],E1:[71,66],W1:[71,57],E2:[69,66],W2:[70,57]},
+    {P:[52,86],K1:[71,73],F1:[63,94],K2:[69,73],F2:[61,94],N:[64,57],H:[68,49],E1:[73,67],W1:[71,58],E2:[71,67],W2:[70,58]}]},
+  pigeon:{t:4000,fo:"P",vb:"0 30 120 70",f:[
+    {P:[56,84],K1:[72,92],F1:[60,93],K2:[38,92],F2:[16,93],N:[63,55],H:[65,46],E1:[69,72],W1:[73,92],E2:[67,72],W2:[71,92]},
+    {P:[56,84],K1:[72,92],F1:[60,93],K2:[38,92],F2:[16,93],N:[82,76],H:[90,80],E1:[96,88],W1:[106,92],E2:[95,87],W2:[105,91]},
+    {P:[56,84],K1:[72,92],F1:[60,93],K2:[38,92],F2:[16,93],N:[82,76],H:[90,80],E1:[96,88],W1:[106,92],E2:[95,87],W2:[105,91]}]},
+  door:{t:3600,fo:"N",d:'<path class="pr" d="M46 2 V95"/>',f:[
+    mk(ST,{E1:[48,23],W1:[48,9],H:[61,14]}),
+    mk(ST,{N:[64,23],H:[66,14],P:[62,53],E1:[50,23],W1:[49,9]})]},
+  crossarm:{t:3600,fo:"N",f:[
+    mk(ST,{E1:[68,27],W1:[73,30],E2:[63,36],W2:[69,29]}),
+    mk(ST,{E1:[66,27],W1:[70,29],E2:[62,35],W2:[67,28]})]},
+  hamstr:{t:3800,fo:"K1",vb:"0 34 120 66",f:[
+    mk(SUP,{K1:[40,70],F1:[36,50],E1:[62,82],W1:[44,74],E2:[61,81],W2:[43,73]}),
+    mk(SUP,{K1:[41,69],F1:[41,48],E1:[61,80],W1:[45,72],E2:[60,79],W2:[44,71]})]},
+  legswall:{t:4200,fo:"P",vb:"0 34 120 66",d:'<path class="pr" d="M28 36 V95"/>',f:[
+    {P:[36,90],K1:[34,70],F1:[33,50],K2:[35,70],F2:[34,50],N:[66,90],H:[76,89],E1:[66,80],W1:[70,72],E2:[64,92],W2:[54,93],sp:[51,90]},
+    {P:[36,90],K1:[34,70],F1:[33,50],K2:[35,70],F2:[34,50],N:[66,90],H:[76,89],E1:[66,80],W1:[70,72],E2:[64,92],W2:[54,93],sp:[51,87]}]},
+  nsdr:{t:4200,fo:"mid",vb:"0 52 120 48",d:'<text class="zz" x="94" y="80">z</text><text class="zz" x="98" y="76">z</text><text class="zz" x="102" y="72">Z</text>',f:[
+    mk(SUP,{sp:[62,90]}), mk(SUP,{sp:[62,86]})]},
+  bike:{t:1300,loop:true,fo:"K1",d:'<path class="pr" d="M44 48 H58 M51 48 L60 80 L82 44 M78 40 L87 45 M60 80 L46 95 M60 80 L78 95"/><circle cx="62" cy="80" r="9" fill="none" stroke="#5a5852" stroke-width="1.5" stroke-dasharray="2 2"/>',f:bikeFrames()},
+  run:{t:620,fo:"N",f:[RUN_A,RUN_B]},
+  walk:{t:1300,fo:"mid",d:'<circle cx="100" cy="16" r="7" fill="#f0b429" opacity=".85"/><path d="M6 99 q8-4 16 0 t16 0 t16 0 t16 0 t16 0 t16 0 t16 0" fill="none" stroke="#1fa3d6" stroke-width="2" opacity=".7"/>',f:[WALK_A,WALK_B]},
+  forehand:{t:1400,fo:"P",props:["racket"],d:'<circle cx="104" cy="34" r="3.2" fill="#c6e03a"/>',f:[
+    {P:[60,53],N:[57,24],H:[58,15],K1:[66,73],F1:[70,94],K2:[52,73],F2:[46,94],E1:[47,33],W1:[39,42],rk:[27,38],E2:[67,31],W2:[74,28]},
+    {P:[62,53],N:[63,24],H:[64,15],K1:[67,73],F1:[70,94],K2:[54,74],F2:[46,94],E1:[73,32],W1:[85,34],rk:[97,33],E2:[56,34],W2:[50,42]}]}
+};
+
+let FIGS=[];
+const ease=t=>.5-.5*Math.cos(Math.PI*t);
+function fill(p){const o=Object.assign({},p);
+  [["K2","K1"],["F2","F1"],["E2","E1"],["W2","W1"]].forEach(([a,b])=>{if(!o[a]&&o[b])o[a]=[o[b][0]-2,o[b][1]];});return o;}
+function poseAt(def,fr,ph){
+  const n=fr.length;if(n===1)return fr[0];
+  let a,b,t;
+  if(def.loop){const x=ph*n,i=Math.floor(x)%n;a=fr[i];b=fr[(i+1)%n];t=x-Math.floor(x);}
+  else{const segs=2*(n-1),x=ph*segs,i=Math.min(segs-1,Math.floor(x));t=ease(x-i);
+    if(i<n-1){a=fr[i];b=fr[i+1];}else{const j=segs-i;a=fr[j];b=fr[j-1];}}
+  const o={};for(const k in a){const q=b[k]||a[k];o[k]=[a[k][0]+(q[0]-a[k][0])*t,a[k][1]+(q[1]-a[k][1])*t];}
+  return o;
+}
+const pt=p=>p[0].toFixed(1)+" "+p[1].toFixed(1);
+function figHTML(id,color){
+  const d=FIG[id];
+  return '<svg class="fig" data-fig="'+id+'" viewBox="'+(d.vb||"0 0 120 100")+'" preserveAspectRatio="xMidYMid meet" aria-hidden="true">'+
+    (d.g===false?'':'<line class="gnd" x1="6" y1="95.5" x2="114" y2="95.5"/>')+(d.d||'')+
+    '<circle class="fo" r="8.5" fill="'+color+'" opacity=".38"/>'+
+    '<path class="far"/><path class="near"/><circle class="hd" r="5.6"/>'+
+    ((d.props||[]).includes("rope")?'<line class="rope"/>':'')+
+    ((d.props||[]).includes("racket")?'<line class="rkl"/><ellipse class="rk" rx="4.5" ry="6.5"/>':'')+
+    ((d.props||[]).includes("db")?'<rect class="db db1" width="10" height="5" rx="1.6"/><rect class="db db2" width="10" height="5" rx="1.6" opacity=".55"/>':'')+
+    ((d.props||[]).includes("bar")?'<g class="br"><circle class="plate" r="7"/><circle class="hole" r="2"/></g>':'')+
+    ((d.props||[]).includes("ball")?'<circle class="bl" r="5.2" fill="'+color+'" stroke="#fff" stroke-width="1"/>':'')+
+  '</svg>';
+}
+function mountFigs(root){
+  root.querySelectorAll("svg.fig").forEach(svg=>{
+    const def=FIG[svg.dataset.fig],f={svg,def,fr:def.f.map(fill),off:Math.random()*def.t,
+      near:svg.querySelector(".near"),far:svg.querySelector(".far"),hd:svg.querySelector(".hd"),fo:svg.querySelector(".fo"),
+      br:svg.querySelector(".br"),bl:svg.querySelector(".bl"),rope:svg.querySelector(".rope"),rkl:svg.querySelector(".rkl"),rk:svg.querySelector(".rk"),
+      db1:svg.querySelector(".db1"),db2:svg.querySelector(".db2")};
+    FIGS.push(f);drawFig(f,.25);
+  });
+}
+function drawFig(f,ph){
+  const p=poseAt(f.def,f.fr,ph);
+  f.near.setAttribute("d","M"+pt(p.N)+(p.sp?" Q"+pt(p.sp)+" "+pt(p.P):" L"+pt(p.P))+" M"+pt(p.P)+" L"+pt(p.K1)+" L"+pt(p.F1)+" M"+pt(p.N)+" L"+pt(p.E1)+" L"+pt(p.W1));
+  f.far.setAttribute("d","M"+pt(p.P)+" L"+pt(p.K2)+" L"+pt(p.F2)+" M"+pt(p.N)+" L"+pt(p.E2)+" L"+pt(p.W2));
+  f.hd.setAttribute("cx",p.H[0]);f.hd.setAttribute("cy",p.H[1]);
+  const fo=f.def.fo==="mid"?[(p.N[0]+p.P[0])/2,(p.N[1]+p.P[1])/2]:p[f.def.fo];
+  f.fo.setAttribute("cx",fo[0]);f.fo.setAttribute("cy",fo[1]);
+  if(f.br&&p.bar)f.br.setAttribute("transform","translate("+pt(p.bar)+")");
+  if(f.bl&&p.ball){f.bl.setAttribute("cx",p.ball[0]);f.bl.setAttribute("cy",p.ball[1]);}
+  if(f.rope){f.rope.setAttribute("x1",p.W1[0]);f.rope.setAttribute("y1",p.W1[1]);f.rope.setAttribute("x2",f.def.an[0]);f.rope.setAttribute("y2",f.def.an[1]);}
+  if(f.rk&&p.rk){f.rkl.setAttribute("x1",p.W1[0]);f.rkl.setAttribute("y1",p.W1[1]);f.rkl.setAttribute("x2",p.rk[0]);f.rkl.setAttribute("y2",p.rk[1]);
+    const ang=Math.atan2(p.rk[1]-p.W1[1],p.rk[0]-p.W1[0])*180/Math.PI+90;
+    f.rk.setAttribute("transform","translate("+pt(p.rk)+") rotate("+ang.toFixed(0)+")");}
+  if(f.db1){f.db1.setAttribute("x",p.W1[0]-5);f.db1.setAttribute("y",p.W1[1]-2.5);f.db2.setAttribute("x",p.W2[0]-5);f.db2.setAttribute("y",p.W2[1]-2.5);}
+}
+const RM=matchMedia("(prefers-reduced-motion: reduce)").matches;
+function animLoop(ts){
+  if(!document.hidden&&document.body.classList.contains("tab-guide"))
+    for(const f of FIGS){if(f.svg.isConnected)drawFig(f,((ts+f.off)%f.def.t)/f.def.t);}
+  requestAnimationFrame(animLoop);
+}
+if(!RM)requestAnimationFrame(animLoop);
+
+/* =====================================================================
+   GUIDE CONTENT (Huberman 9 haftalık kılavuzdan özet)
+   ===================================================================== */
+const ROAD=[null,
+  {ph:"Orta · yeniden giriş",k:"o",sq:"3×5 · %70 · RIR 3–4",up:"3×10 · RIR 3 · 2 sn eksantrik",th:"25 dk",mc:"5-3-1",n4:"2",z2:"45"},
+  {ph:"Orta",k:"o",sq:"4×5 · %75 · RIR 2–3",up:"3×10–12 · RIR 2 · 3 sn",th:"30 dk",mc:"6-4-2",n4:"3",z2:"50"},
+  {ph:"Orta",k:"o",sq:"4×4 · %80 · RIR 2",up:"4×8–10 · RIR 2",th:"30 dk",mc:"6-4-2",n4:"4",z2:"60"},
+  {ph:"Orta · zirve",k:"o",sq:"5×3 · %82–85 · RIR 1–2",up:"4×8–12 · RIR 1–2 · 3–4 sn",th:"35 dk",mc:"8-6-4",n4:"4",z2:"60"},
+  {ph:"Deload",k:"d",sq:"3×3 · %70 · RIR 4",up:"2×10 · RIR 4",th:"25 dk",mc:"5-3-1",n4:"2",z2:"45"},
+  {ph:"İleri",k:"i",sq:"5×5 · %80 (yeni e1RM)",up:"4×8–10 · RIR 1 · 4 sn",th:"35–40 dk",mc:"8-6-4",n4:"5",z2:"70"},
+  {ph:"İleri",k:"i",sq:"5×4 · %85 · RIR 1",up:"4×6–10 · son set RIR 0–1",th:"40 dk",mc:"10-8-6",n4:"6",z2:"75"},
+  {ph:"İleri · zirve",k:"i",sq:"4–5×3 · %87–90 · RIR 1",up:"4×8–12 · son sette drop set",th:"40 dk",mc:"10-8-6",n4:"6",z2:"75"},
+  {ph:"Deload + test",k:"d",sq:"3RM testi, sonra hacim −%50",up:"2–3×8 · RIR 3",th:"30 dk",mc:"12-10-8",n4:"test",z2:"60"}];
+const GUIDE_ORDER=["alt","topar","ust","aero","n44","z2"];
+const GUIDE={
+ alt:{day:"Pazartesi",dur:"60–75 dk",kcal:"≈3.200 kcal",
+  goal:"<b>Maksimum kuvvet ve güç.</b> Haftanın en ağır günü: kalça ve bacaklar, tenisteki çıkış hızının ve sakatlıktan korunmanın temeli. Az tekrar, ağır yük, uzun dinlenme.",
+  progT:"squat / RDL",prog:r=>r.sq,
+  blocks:[
+   {t:"Isınma",s:"8–10 dk",li:["5 dk hafif bisiklet","Bacak savurma 10/taraf","Boş goblet squat 2×5, boş çubukla RDL 1×8","Rampa setleri: bar ×5 → %50 ×5 → %65 ×3 → %75 ×2"]},
+   {t:"Ana blok",rows:[["Back squat","3–5 × 3–5"],["Romanian deadlift","3–4 × 5"],["Ters lunge / step-up","3 × 6–8/bacak"],["Farmer's carry","3–4 × 30–40 m"]]},
+   {t:"Dinlenme ve tempo",p:["Ağır setlerde 3–5 dk, yardımcı hareketlerde 2 dk dinlen. Kaldırış olabildiğince hızlı, iniş 2–3 sn.","Setler arasında 1–3 fizyolojik iç çekiş (burundan derin al, kısa ek nefes, ağızdan uzun ver)."]},
+   {t:"Bitiş",li:["3–5 dk yavaş nefes: 4 sn al, 6–8 sn ver","Kalça fleksörü esnemesi","Soğuk suya en az 6 saat sonra gir; hemen girmek kuvvet adaptasyonunu köreltir"]}],
+  ex:[
+   {n:"Back squat",f:"squat",tags:["3–5×3–5","%70–90 1RM","3–5 dk"],steps:["Bar trapezde, ayaklar omuz genişliğinde, parmak uçları hafif dışa.","Kalça geri, dizler parmak yönünde; iniş 2–3 sn.","Uyluk paralel ya da biraz altı, topuk yerde.","Kalça ve göğüs aynı hızda kalkar."],
+    nefes:"Tepede karına 360° nefes al ve kilitle; kalkışın son üçte birinde ver.",kacin:"Dizlerin içe çökmesi, topuğun kalkması, kalçanın göğüsten önce kalkması.",alt:[["Salon","Goblet, safety-bar ya da hack squat"],["Ağırlıksız","4 sn inişli tempo squat, Bulgar split squat"]]},
+   {n:"Romanian deadlift",f:"rdl",tags:["3–4×5","RIR 2","3 dk"],steps:["Bar kalçada, dizler hafif (15–20°) bükük.","Diz açısını sabit tut, kalçayı geriye it; bar uyluğa sürtünerek iner.","Bar diz altı ile kaval ortası arasında; arka bacak gergin.","Kalçayı öne sürerek kalk; tepede beli geriye kırma."],
+    nefes:"Tepede al ve tut, kalkışta ver.",kacin:"Bel yuvarlanması, squat gibi diz bükmek, barın vücuttan uzaklaşması.",alt:[["Salon","DB ya da trap-bar RDL, kablo pull-through"],["Ağırlıksız","Tek bacak RDL, Nordic negatif"]]},
+   {n:"Ters lunge",f:"lunge",tags:["3×6–8/bacak","RIR 2","2 dk"],steps:["Dik dur, dambıllar yanlarda.","Bir ayağını 60–90 cm geriye at; gövde dik kalır.","İki diz yaklaşık 90°, arka diz yerden 2–3 cm yukarıda.","Ön topuktan iterek başlangıca dön."],
+    nefes:"İnişte al, kalkışta ver.",kacin:"Ön dizin içe kaçması, kısa adım, gövdenin öne düşmesi.",alt:[["Salon","Diz yüksekliğinde kutuya step-up, sled itme"],["Ağırlıksız","Sandalyeye step-up, Bulgar split squat"]]},
+   {n:"Farmer's carry",f:"carry",tags:["3–4×30–40 m","90 sn"],steps:["Ağırlıkları deadlift tekniğiyle yerden al.","Omuzlar aşağı-geri, kaburga pelvisin üstünde, karın sıkı.","Kısa ve hızlı adımlarla 30–40 m yürü; gövde salınmaz.","Kalçadan menteşe yaparak yere bırak."],
+    nefes:"Kısa, kontrollü nefes; karın gergin kalır.",kacin:"Omuzları kulağa kaldırmak, yana eğilmek.",alt:[["Salon","Tek kollu suitcase carry: tenis için en iyisi"],["Ağırlıksız","Ev dambılıyla suitcase carry, ayı yürüyüşü 3×20 m"]]}]},
+
+ topar:{day:"Salı",dur:"60–90 dk, ara ara",kcal:"≈2.900 kcal",hero:"downdog",
+  goal:"<b>Toparlanma ve sinir sistemi.</b> Haftanın sıcak-soğuk dozunun büyük kısmı bugün. Amaç yorgunluğu atmak ve sonraki antrenmana taze girmek; zorlamak yok.",
+  blocks:[
+   {t:"Sabah",li:["20 dk yürüyüş + gün ışığı (aç karnına olabilir)"]},
+   {t:"Termal blok",thermal:true,rows:[["Sauna 80–100 °C","3 × 15 dk"],["Soğuk duş / küvet","3 × 2 dk"],["Son tur","soğukla bitir"]],p:["Ardından havlusuz, kendi kendine ısın."]},
+   {t:"Mobilite akışı",s:"20–25 dk, sırayla",mob:[
+     ["child","Çocuk pozu","60 sn","Sırta genişleyen burun nefesi"],["catcow","Kedi–inek","8 tekrar","Kedide ver, inekte al"],
+     ["downdog","Aşağı bakan köpek","45 sn","4 sn al / 6 sn ver"],["wgs","World's greatest stretch","5/taraf","Rotasyonda ver"],
+     ["lowlunge","Alçak lunge","2×30 sn/taraf","Kalça fleksörü; uzun veriş"],["deepsq","Derin squat tutuşu","60 sn","Verişte dizleri it"],
+     ["pigeon","Güvercin","60 sn/taraf","Uzun veriş"],["door","Kapıda göğüs esnemesi","2×30 sn/taraf","Yavaş nefes"],
+     ["crossarm","Çapraz kol, arka omuz","2×30 sn/taraf","Yavaş nefes"],["hamstr","Sırtüstü hamstring","2×30 sn/bacak","Önce ön bacağı 10 sn kas"],
+     ["legswall","Bacaklar duvarda","2–3 dk","Döngüsel iç çekiş"]],
+    p:["Son pozdan sonra şavasana ve NSDR ile kapat. Ağrı eşiğinin ≈%30–40'ı kadar zorla; esnerken verişi uzat."]},
+   {t:"Sinir sistemi",li:["NSDR ya da Yoga Nidra 20–30 dk (aşağıda)","Akşam mobilite akışı 20–25 dk"]},
+   {t:"Fizyolojik iç çekiş",p:["Burundan derin al, tepede burundan kısa bir ek nefes daha, sonra ağızdan boşalana kadar uzun ver. Anlık sakinleşme için 1–3 tekrar yeter; her gün 5 dk döngüsel yapılabilir."]},
+   {t:"Beslenme",p:["Dinlenme günü: protein aynı kalır, karbonhidrat azalır."]}],
+  ex:[
+   {n:"NSDR / Yoga Nidra",f:"nsdr",tags:["10–30 dk"],steps:["Sırtüstü uzan, kollar yanlarda, avuçlar yukarı, gözler kapalı.","3–5 kez burundan derin al, ağızdan uzun ver.","Beden taraması: ayaktan başa her bölgede 5–10 sn yalnızca fark et.","“Bedenim yere gömülüyor” imgesiyle 1–2 dk kal, sonra 5–15 dk nefesi izle.","Parmaklarını oynat, sağ yanına dön, yavaşça kalk."],
+    nefes:"Nefesi kontrol etme, yalnızca izle.",kacin:"Telefonu yanında tutmak; uyuyakalırsan sorun değil.",alt:[["Ne zaman","Toparlanma gününde 20–30 dk; kötü uykudan sonra öğleden sonra 10–20 dk"]]}]},
+
+ ust:{day:"Çarşamba",dur:"60–75 dk",kcal:"≈3.200 kcal",
+  goal:"<b>Üst vücut hipertrofisi.</b> Kas kütlesi için orta tekrar, kontrollü iniş. Çekiş ve itiş dengeli; sonunda tenis omzunu koruyan iki hareket.",
+  progT:"set · tekrar",prog:r=>r.up,
+  blocks:[
+   {t:"Isınma",s:"8 dk",li:["3 dk kürek ya da ip","Bant pull-apart 2×15","Duvar slaytı 10","Hafif barfiks ya da şınav 1×5"]},
+   {t:"Ana blok",rows:[["Barfiks / chin-up","3–4 × 8–12"],["Eğimli DB press ya da dips","3–4 × 8–12"],["Eğilerek barbell row","3–4 × 8–12"],["Overhead press","3–4 × 8–12"]]},
+   {t:"Tenis koruyucu",rows:[["Face pull","3 × 12–15"],["Sağlık topu rotasyonel atış","3 × 5/taraf"]],p:["RIR 1–2, eksantrik 3–4 sn, dinlenme 90 sn–2 dk."]},
+   {t:"İsteğe bağlı",p:["Setler arasında avuç içiyle soğuk su şişesi tutmak sonraki sette tekrar sayısını artırabilir."]}],
+  ex:[
+   {n:"Barfiks / chin-up",f:"pullup",tags:["3–4×8–12","RIR 1–2"],steps:["Ölü asılış, kollar tam açık.","Önce kürek kemiklerini aşağı çek.","Dirsekleri kaburgaya sür; çene barın üstüne.","3–4 sn'de tam asılışa in."],
+    nefes:"Çekişte ver ya da tut, inişte al.",kacin:"Sallanarak çekmek, yarım hareket, çeneyi uzatmak.",alt:[["Salon","Lat pulldown, destekli barfiks"],["Ağırlıksız","Masa ya da TRX altında ters kürek, negatif barfiks"]]},
+   {n:"Eğimli dambıl press (30°)",f:"incline",tags:["3–4×8–12","3–4 sn eks."],steps:["Kürek kemikleri geride-aşağıda, dambıllar göğüs üstünde.","Dirsekler gövdeye 45–60° açıyla iner.","Dambıllar üst göğüs hizasında, ön kollar dikey.","Hafif yay çizerek it; dirseği kilitleme."],
+    nefes:"İnişte al, itişte ver.",kacin:"Dirsekleri 90° açmak, kürek kemiklerinin öne kayması.",alt:[["Salon","Eğimli barbell, kablo ya da makine press"],["Ağırlıksız","Ayaklar yüksekte şınav, 3 sn negatifli şınav"]]},
+   {n:"Dips",f:"dips",tags:["3–4×8–12","press ile dönüşümlü"],steps:["Paralel barda kollar kilitli, omuzlar aşağıda.","Gövde 15–30° öne, dirsekler geriye bükülür.","Omuz dirsek hizasında; daha derine inme.","İterek kalk, omuzlar kulaklardan uzak."],
+    nefes:"İnişte al, kalkışta ver.",kacin:"Aşırı derinlik, omuzların öne yuvarlanması. Ön omuz ağrırsa eğimli press'e geç.",alt:[["Salon","Destekli dips makinesi"],["Ağırlıksız","Sandalye dips, kapalı tutuş şınav"]]},
+   {n:"Eğilerek barbell row",f:"row",tags:["3–4×8–12","RIR 1–2"],steps:["Dizler hafif bükük, gövde 30–45° eğik, bel nötr.","Önce kürek kemiklerini sık.","Barı alt kaburgaya çek; dirsekler gövdeye ≈45°.","2–3 sn'de kontrollü indir."],
+    nefes:"Çekmeden önce al ve tut, tepede ver.",kacin:"Gövdeyle sallanmak, bel yuvarlanması.",alt:[["Salon","Göğüs destekli DB row, oturarak kablo row"],["Ağırlıksız","Ters kürek, tek kollu dambıl row"]]},
+   {n:"Overhead press",f:"ohp",tags:["3–4×8–12","RIR 1–2"],steps:["Bar köprücük kemiğinde, ön kollar dikey; kalça ve karın sıkı.","Bar yüzden geçerken başı hafif geri çek.","Bar alnı geçince başı kolların arasına sok.","Bar orta ayak üstünde, kollar kulak yanında."],
+    nefes:"Tepede al ve tut, itiş sonunda ver.",kacin:"Beli arkaya kırmak, barı öne yay çizerek itmek.",alt:[["Salon","Oturarak DB press; landmine press tenis omzu için en dostu"],["Ağırlıksız","Pike push-up, duvarda amuda kalkma"]]},
+   {n:"Face pull + dış rotasyon",f:"facepull",tags:["3×12–15","tenis koruyucu"],steps:["Kablo göz hizasında, ip tutacak, kollar uzanık.","Dirsekleri yüksek tutarak yüze doğru çek.","Eller kulak yanında, ön kollar dikey; 1 sn tut.","3 sn'de kontrollü bırak."],
+    nefes:"Çekerken ver, bırakırken al.",kacin:"Belle çekmek, dirsekleri düşürmek.",alt:[["Salon","Bantla pull-apart"],["Ağırlıksız","Yüzüstü Y-T-W, bantla dış rotasyon"]]},
+   {n:"Sağlık topu rotasyonel atış",f:"medball",tags:["3×5/taraf","3–5 kg top"],steps:["Duvara yan dur; top arka kalçada, ağırlık arka bacakta.","Hareketi ayaktan başlat, arka kalçayı içe döndür.","Gövde ve kollar kamçı gibi; top bel hizasından çıkar.","Duvara patlayıcı fırlat, arka ayak döner."],
+    nefes:"Atışta keskin ver.",kacin:"Yalnızca kolla atmak, kalçayı kilitli tutmak.",alt:[["Salon","Kablo ya da landmine rotasyonel itiş"],["Ağırlıksız","Rotasyonel sıçrama, hızlı gölge forehand/backhand"]]}]},
+
+ aero:{day:"Perşembe",dur:"30–40 dk + 15 dk",kcal:"≈3.000 kcal",hero:"bike",
+  goal:"<b>Hafif aerobik, darbesiz.</b> Nabız bölgesi 2–3'te (maks. nabzın ≈%60–80'i) temel dayanıklılık; konuşabilmelisin ama şarkı söyleyememelisin. Ertesi gün tenis ya da yoğun bir seans varsa bacaklar taze kalır.",
+  progT:"kardiyo · McGill",prog:r=>r.th+" · "+r.mc,
+  blocks:[
+   {t:"Kardiyo",li:["Sabit bisiklet, eliptik ya da kürek","Burundan nefes zorlanmaya başlıyorsa üst sınırdasın"]},
+   {t:"Ardından",rows:[["Mobilite akışı (kısa)","10 dk"],["McGill Big 3","5-3-1"],["Pallof press","2 × 8/taraf"]]},
+   {t:"Rus piramidi (McGill)",p:["Örnek 5-3-1: 5 tekrar × 10 sn tutuş, 30 sn ara, 3 tekrar, ara, 1 tekrar. İlerlerken tutuşu uzatma, tekrar sayısını artır."]},
+   {t:"Ertesi güne hazırlık",li:["Ağır eksantrik bacak işi, sıçrama ya da tükenişe giden set yok","Akşam karbonhidratı biraz artır","İsteğe bağlı kısa soğuk duş"]}],
+  ex:[
+   {n:"McGill curl-up",f:"curlup",tags:["Rus piramidi","10 sn tutuş"],steps:["Sırtüstü, bir diz bükülü; eller bel çukurunun altında.","Karnı yumruk yiyecekmiş gibi sık.","Baş ve omuzları birkaç cm kaldır, boyun nötr; 10 sn.","Kontrollü in; her sette bacak değiştir."],
+    nefes:"Tutuşta kısa, sakin nefes; nefesi kesme.",kacin:"Beli yere bastırmak, boyunla çekmek.",alt:[["Kolay","Dead bug"],["Zor","Dirsekleri yerden kaldır, tutuşta derin nefes al"]]},
+   {n:"Yan köprü",f:"sideplank",tags:["Rus piramidi","10 sn tutuş"],steps:["Yan yat; dirsek omuz altında, dizler bükülü ya da ayaklar üst üste.","Kalçayı kaldır; baş, gövde ve ayaklar tek çizgide.","10 sn tut; ileri seviyede üst kolu kaldır."],
+    nefes:"Tutuşta kısa, sakin nefes.",kacin:"Kalçanın düşmesi, omzun kulağa gömülmesi.",alt:[["Kolay","Dizden yan köprü"],["Zor","Plank üzerinden diğer tarafa dönerek"]]},
+   {n:"Bird dog",f:"birddog",tags:["Rus piramidi","10 sn tutuş"],steps:["Dört ayak; eller omuz, dizler kalça altında, bel nötr.","Zıt kol ve bacağı yatay hizaya uzat; elde yumruk.","10 sn tut; kalça dönmesin.","Dirsek ve dizi gövde altında buluştur, tekrar uzat."],
+    nefes:"Tutuşta kısa, sakin nefes.",kacin:"Bacağı yatayın üstüne kaldırıp beli çukurlaştırmak.",alt:[["Kolay","Yalnız kol ya da yalnız bacak"],["Zor","Uzanmış hâlde küçük kare çiz"]]},
+   {n:"Pallof press",f:"pallof",tags:["2×8/taraf","2 sn tutuş"],steps:["Kablo göğüs hizasında yanda; tutacak göğüste.","Kolları öne uzat; gövde kabloya dönmesin.","2 sn tut, kontrollü geri çek."],
+    nefes:"Uzatırken ver, tutuşta sakin nefese devam.",kacin:"Gövdenin kabloya dönmesi, nefes tutmak.",alt:[["Salon","Landmine anti-rotasyon"],["Ağırlıksız","Plank'te omuza dokunma, partnerle elle direnç"]]}]},
+
+ n44:{day:"Cumartesi",dur:"≈60 dk",kcal:"≈3.200 kcal",hero:"run",
+  goal:"<b>VO₂ maks.</b> Norveç 4×4: dört dakika sert (maks. nabzın %85–95'i), üç dakika aktif dinlenme. Tenis bunun yerini tutmaz; 8 haftada VO₂ maks ≈%7 artabilir.",
+  progT:"tur sayısı",prog:r=>r.n4==="test"?"test":r.n4+" tur",
+  blocks:[
+   {t:"Nabız profili",hr:true},
+   {t:"Akış",rows:[["Kademeli ısınma","10 dk"],["4 dk %85–95 / 3 dk %60–70","4–6 tur"],["Soğuma","5 dk"],["McGill Big 3","piramit"],["Mobilite + esneme","10 dk"]]},
+   {t:"Alet ve efor",p:["Kürek, sabit bisiklet, eğimli koşu bandı ya da sahilde rampa. Efor 10 üzerinden 8–9; son dakikada konuşamazsın.","Dinlenmede durma, yavaş hareket etmeye devam et."]},
+   {t:"Termal ve akşam",li:["Sauna 15 dk + soğuk 2–3 dk; dayanıklılık işinden sonra soğuk serbest","Sosyal akşamsa en fazla 1–2 kadeh, yemekle, her kadehe bir bardak su"]}],
+  link:"aero",ex:[]},
+
+ z2:{day:"Pazar",dur:"60–75 dk",kcal:"≈3.100 kcal",hero:"walk",
+  goal:"<b>Uzun ve sakin tempo.</b> Kalp ve mitokondri için temel dayanıklılık; aynı zamanda haftanın toparlanması. Rahatça tam cümle kurabilecek kadar hafif.",
+  progT:"seans süresi",prog:r=>r.z2+" dk",
+  blocks:[
+   {t:"Seans",li:["Sahilde tempolu yürüyüş ya da hafif koşu; yorgunsan eliptik","Mümkünse yalnız burundan nefes","Aç karnına ya da bir hurmayla yapılabilir"]},
+   {t:"Nabız",p:["Maksimum nabzın ≈%60–70'i. Konuşma testi: rahatça tam cümle kurabiliyorsan doğru yerdesin."]},
+   {t:"Günün geri kalanı",li:["Sabah güneşi","Akşam 10 dk statik esneme","Haftanın planını gözden geçir"]},
+   {t:"Haftalık kontrol",p:["Sabah tartı ortalamasına bak; kilo hedefe göre kaloriyi ayarla."]}],
+  ex:[]}
+};
+
+let guideId=null;
+try{guideId=localStorage.getItem("sporTakvim.guide");}catch(e){}
+if(!GUIDE[guideId])guideId="alt";
+
+function renderChips(){
+  $("chips").innerHTML=GUIDE_ORDER.map(id=>{const s=BY[id];
+    return '<button class="chip'+(id===guideId?' on':'')+'" data-g="'+id+'" style="--c:'+s.c+'"><span class="ic">'+s.e+'</span>'+s.n+'</button>';}).join("");
+  const c=$("chips").querySelector(".chip.on");if(c)requestAnimationFrame(()=>{$("chips").scrollLeft=c.offsetLeft-$("chips").offsetLeft-($("chips").clientWidth-c.offsetWidth)/2;});
+}
+$("chips").onclick=e=>{const b=e.target.closest(".chip");if(!b)return;showGuide(b.dataset.g,true);};
+
+function hrChart(c){
+  /* warm-up 10, then 4×(4 hard,3 easy), cool-down 5 → 43 min */
+  const X=m=>8+m*(304/43),Y=p=>78-(p-55)*1.55;
+  let d="M"+X(0)+" "+Y(58)+" L"+X(10)+" "+Y(70),t=10;
+  for(let i=0;i<4;i++){d+=" L"+X(t+.6)+" "+Y(86)+" L"+X(t+4)+" "+Y(93);t+=4;d+=" L"+X(t+.6)+" "+Y(72)+" L"+X(t+3)+" "+Y(67);t+=3;}
+  d+=" L"+X(43)+" "+Y(60);
+  let segs="";t=10;for(let i=0;i<4;i++){segs+='<rect x="'+X(t)+'" y="84" width="'+(X(t+4)-X(t)-1)+'" height="12" rx="3" fill="'+c+'"/><text x="'+((X(t)+X(t+4))/2)+'" y="93" text-anchor="middle" font-size="7.5" font-weight="800" fill="#fff">4 dk</text>';t+=7;}
+  return '<svg class="chart" viewBox="0 0 320 100">'+
+    '<rect x="8" y="'+Y(95)+'" width="304" height="'+(Y(85)-Y(95))+'" fill="'+c+'" opacity=".18"/>'+
+    '<rect x="8" y="'+Y(70)+'" width="304" height="'+(Y(60)-Y(70))+'" fill="#54c39b" opacity=".12"/>'+
+    '<path d="'+d+'" fill="none" stroke="#ecebe3" stroke-width="2.2" stroke-linejoin="round"/>'+
+    '<rect x="8" y="84" width="'+(X(10)-X(0)-1)+'" height="12" rx="3" fill="#3a3a37"/><text x="'+((X(0)+X(10))/2)+'" y="93" text-anchor="middle" font-size="7.5" fill="#a09d94">ısınma</text>'+segs+'</svg>'+
+    '<div class="legend"><span><i style="background:'+c+';opacity:.6"></i>Sert: maks. nabzın %85–95\'i</span><span><i style="background:#54c39b;opacity:.5"></i>Aktif dinlenme %60–70</span></div>';
+}
+function thermalChart(){
+  let x=6,s="";
+  for(let i=0;i<3;i++){s+='<rect x="'+x+'" y="10" width="76" height="26" rx="6" fill="#e5484d" opacity=".75"/><text x="'+(x+38)+'" y="27" text-anchor="middle" font-size="10" font-weight="800" fill="#fff">🔥 15 dk</text>';x+=78;
+    s+='<rect x="'+x+'" y="10" width="22" height="26" rx="6" fill="#1fa3d6"/><text x="'+(x+11)+'" y="27" text-anchor="middle" font-size="9" font-weight="800" fill="#fff">❄</text>';x+=24;}
+  return '<svg class="chart" viewBox="0 0 320 44" style="margin-bottom:10px">'+s+'</svg>';
+}
+
+function renderGuide(){
+  FIGS=[];
+  const g=GUIDE[guideId],s=BY[guideId];
+  let html='<div style="--c:'+s.c+'">';
+  html+='<div class="hero"><div class="h-top"><div><div class="h-day">Huberman planı</div><h2>'+s.n+'</h2>'+
+    '<div class="pills"><span>⏱ '+g.dur+'</span><span>🍽 '+g.kcal+'</span></div></div>'+
+    '<div class="h-emo">'+icon(s,0)+'</div></div>'+
+    (g.hero?'<div class="figbox">'+figHTML(g.hero,s.c)+'</div>':'')+
+    '<p class="goal">'+g.goal+'</p></div>';
+  /* 9-week flow (no dates) */
+  html+='<div class="gsec"><h3>9 haftalık akış'+(g.progT?'<span>'+g.progT+'</span>':'')+'</h3><div class="wkstrip">'+
+    ROAD.slice(1).map((x,i)=>'<div class="'+x.k+'">H'+(i+1)+'</div>').join("")+'</div>'+
+    '<div class="legend"><span><i style="background:rgba(84,195,155,.5)"></i>Orta</span><span><i style="background:#141413;border:1px solid #55534e"></i>İleri</span><span><i style="background:#55534e"></i>Deload</span></div>'+
+    '<p style="margin-top:10px">4 hafta orta faz → 1 hafta deload → 3 hafta ileri faz → son hafta deload + test. Haftanın tüm setlerini hedef RIR\'den iyi bitirdiysen sonraki hafta yükü artır (alt vücut 2,5–5 kg, üst vücut 1–2,5 kg). Deload\'da yük ve hacim %40–50 azalır, yoğunluk orta kalır.</p>'+
+    (g.prog?'<div class="rows prog" style="margin-top:12px">'+ROAD.slice(1).map((x,i)=>'<div class="r"><span><em class="hk '+x.k+'">H'+(i+1)+'</em>'+x.ph+'</span><b>'+g.prog(x)+'</b></div>').join("")+'</div>':'')+
+    '</div>';
+  g.blocks.forEach(b=>{
+    html+='<div class="gsec"><h3>'+b.t+(b.s?'<span>'+b.s+'</span>':'')+'</h3>';
+    if(b.hr)html+=hrChart(s.c);
+    if(b.thermal)html+=thermalChart();
+    if(b.mob)html+='<div class="mob">'+b.mob.map((m,i)=>'<div class="mt"><div class="mf">'+figHTML(m[0],s.c)+'<span class="mn">'+(i+1)+'</span></div><div class="mtx"><b>'+m[1]+'</b><span class="md">'+m[2]+'</span><small>'+m[3]+'</small></div></div>').join("")+'</div>';
+    if(b.ramp)html+='<div class="ramp">'+b.ramp.map((x,i)=>'<div><b><i>'+(i+1)+'</i>'+x[0]+'</b>'+x[1]+'</div>').join("")+'</div>';
+    if(b.li)html+='<ul class="lst">'+b.li.map(x=>'<li>'+x+'</li>').join("")+'</ul>';
+    if(b.rows)html+='<div class="rows">'+b.rows.map(x=>'<div class="r"><span>'+x[0]+'</span><b>'+x[1]+'</b></div>').join("")+'</div>';
+    if(b.p)html+=(b.rows||b.li||b.mob?'<div style="height:10px"></div>':'')+b.p.map(x=>'<p>'+x+'</p>').join("");
+    html+='</div>';
+  });
+  if(g.link){const L=BY[g.link];html+='<div class="gsec"><h3>McGill Big 3</h3><p>Curl-up, yan köprü ve bird dog anlatımı Hafif aerobik rehberinde.</p><button class="xlink" data-go="'+g.link+'">'+L.e+' '+L.n+' rehberine git →</button></div>';}
+  if(g.ex.length)html+='<div class="month" style="margin-top:22px">Hareketler</div>';
+  g.ex.forEach(x=>{
+    html+='<div class="ex"><div class="figbox">'+figHTML(x.f,s.c)+'<div class="tags">'+x.tags.map(t=>'<span>'+t+'</span>').join("")+'</div></div>'+
+      '<div class="bd"><h4>'+x.n+'</h4><ol class="steps">'+x.steps.map(t=>'<li>'+t+'</li>').join("")+'</ol>'+
+      '<div class="meta"><div><b>Nefes</b>'+x.nefes+'</div><div class="av"><b>Kaçın</b>'+x.kacin+'</div></div>'+
+      '<div class="alts">'+x.alt.map(a=>'<div><em>'+a[0]+'</em><span>'+a[1]+'</span></div>').join("")+'</div></div></div>';
+  });
+  html+='<p class="gnote">Kaynak: kendi Huberman 9 haftalık kılavuzun (özet). Eğitim amaçlıdır, tıbbi tavsiye değildir.</p></div>';
+  $("guide").innerHTML=html;
+  $("guide").querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>showGuide(b.dataset.go,true));
+  mountFigs($("guide"));
+}
+
+/* =====================================================================
+   ANTRENMAN — spontane ağırlık programı (takvimden bağımsız)
+   ===================================================================== */
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const num=v=>{const m=String(v).replace(",",".").match(/\d+(\.\d+)?/);return m?parseFloat(m[0]):NaN;};
+const fmtKg=n=>(Math.round(n*10)/10).toLocaleString("tr-TR");
+let openW=new Set(), logSaveT=null;
+function wById(id){return state.workouts.find(w=>w.id===id);}
+function wSummary(w){
+  let sets=0,vol=0,cnt=0;
+  w.rows.forEach(r=>{if(!r.n.trim()&&!r.s&&!r.r&&!r.w)return;cnt++;const s=num(r.s),rp=num(r.r),kg=num(r.w);
+    if(!isNaN(s))sets+=s;if(!isNaN(s)&&!isNaN(rp)&&!isNaN(kg))vol+=s*rp*kg;});
+  return {cnt,sets,vol};
+}
+function sumHTML(w){const m=wSummary(w);return '<b>'+m.cnt+'</b> hareket · <b>'+m.sets+'</b> set'+(m.vol?' · <b>'+fmtKg(m.vol)+' kg</b> toplam hacim':'');}
+function dateLabel(k){const d=parse(k);return d.getDate()+" "+MONTHS[d.getMonth()]+", "+DOWN[d.getDay()];}
+function focusName(f){const x=FOCUS.find(a=>a[0]===f);return x?x[1]:"";}
+function rowHTML(r,i){
+  return '<div class="exr" data-i="'+i+'"><span class="no">'+(i+1)+'</span>'+
+    '<input class="nm" data-k="n" placeholder="Hareket adı" autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="words" enterkeyhint="next" value="'+esc(r.n)+'">'+
+    '<button class="rm" data-act="rm" aria-label="Satırı sil">✕</button>'+
+    '<label class="nf"><input data-k="s" inputmode="numeric" placeholder="–" value="'+esc(r.s)+'"><span>set</span></label>'+
+    '<label class="nf"><input data-k="r" inputmode="numeric" placeholder="–" value="'+esc(r.r)+'"><span>tekrar</span></label>'+
+    '<label class="nf"><input data-k="w" inputmode="decimal" placeholder="–" value="'+esc(r.w)+'"><span>kg</span></label></div>';
+}
+function woHTML(w){
+  if(openW.has(w.id)){
+    return '<div class="wo open" data-w="'+w.id+'"><div class="wo-h">'+
+      '<div class="wo-lbl">'+(w.date===todayKey()?'<b>Bugün</b> · ':'')+dateLabel(w.date)+'</div>'+
+      '<input type="date" data-f="date" value="'+w.date+'" aria-label="Tarih">'+
+      '<select data-f="focus" class="'+(w.focus?'':'unset')+'" aria-label="Odak bölge"><option value="">Odak bölge…</option>'+
+        FOCUS.map(f=>'<option value="'+f[0]+'"'+(w.focus===f[0]?' selected':'')+'>'+f[1]+'</option>').join("")+'</select></div>'+
+      '<div class="exl">'+w.rows.map(rowHTML).join("")+'</div>'+
+      '<button class="addr" data-act="add">+ Hareket ekle</button>'+
+      '<div class="wo-f"><span class="sum">'+sumHTML(w)+'</span>'+
+      '<button class="del" data-act="del">Sil</button><button data-act="copy">Tekrarla</button><button class="done" data-act="close">Bitti ✓</button></div></div>';
+  }
+  const rows=w.rows.filter(r=>r.n.trim()||r.s||r.r||r.w),m=wSummary(w);
+  return '<div class="wo" data-w="'+w.id+'"><button class="wo-c" data-act="open"><div class="t"><b>'+(w.date===todayKey()?'Bugün · ':'')+dateLabel(w.date)+'</b>'+
+    (w.focus?'<span class="fp">'+focusName(w.focus)+'</span>':'')+'</div>'+
+    rows.map(r=>{const parts=[];if(r.s||r.r)parts.push((r.s||"?")+"×"+(r.r||"?"));if(r.w)parts.push(r.w+" kg");
+      return '<div class="ln"><span>'+esc(r.n||"İsimsiz hareket")+'</span><span>'+parts.join(" · ")+'</span></div>';}).join("")+
+    '<div class="ft"><span>'+m.sets+' set'+(m.vol?' · '+fmtKg(m.vol)+' kg':'')+'</span><i>Düzenle ›</i></div></button></div>';
+}
+function renderLog(){
+  const list=state.workouts.slice().sort((a,b)=>b.date.localeCompare(a.date)||b.ts-a.ts);
+  let h='<div class="lg-head"><h2>Antrenman</h2><p>Kendi ağırlık programını yaz: hareket, set, tekrar, kilo.</p></div>'+
+    '<button class="lg-new" data-act="new">＋ Yeni antrenman</button>';
+  if(!list.length)h+='<div class="lg-empty"><span class="big">🏋️</span>Henüz antrenman yok.<br>“Yeni antrenman”a dokun, satır satır hareketlerini ekle.</div>';
+  h+=list.map(woHTML).join("");
+  $("log").innerHTML=h;
+}
+
+/* ---------- Hareket adı hafızası + öneriler ---------- */
+const low=s=>String(s).toLocaleLowerCase("tr").trim();
+function rememberName(n){
+  n=String(n||"").trim().slice(0,80);if(!n)return;
+  const k=low(n);state.names=state.names.filter(x=>low(x)!==k);state.names.unshift(n);  /* most recent first */
+  if(state.names.length>400)state.names.length=400;
+}
+function matches(q){
+  q=low(q);if(!q)return [];
+  const starts=[],words=[],inside=[];
+  for(const n of state.names){const l=low(n);if(l===q)continue;
+    if(l.startsWith(q))starts.push(n);else if(l.split(/[\s\/\-–(]+/).some(w=>w.startsWith(q)))words.push(n);else if(l.includes(q))inside.push(n);}
+  return starts.concat(words,inside).slice(0,5);
+}
+function hiName(n,q){const i=low(n).indexOf(low(q));if(i<0||!q.trim())return esc(n);
+  return esc(n.slice(0,i))+'<mark>'+esc(n.slice(i,i+q.trim().length))+'</mark>'+esc(n.slice(i+q.trim().length));}
+function closeSugg(){document.querySelectorAll(".sugg").forEach(x=>x.remove());}
+function showSugg(input){
+  closeSugg();const list=matches(input.value);if(!list.length)return;
+  const box=document.createElement("div");box.className="sugg";
+  box.innerHTML=list.map(n=>'<div><button class="pick" data-n="'+esc(n)+'">'+hiName(n,input.value)+'</button><button class="forget" data-n="'+esc(n)+'" aria-label="Öneriden kaldır">✕</button></div>').join("");
+  const row=input.closest(".exr");row.insertBefore(box,row.querySelector(".nf"));
+}
+/* keep focus in the field while tapping a suggestion */
+$("log").addEventListener("pointerdown",e=>{if(e.target.closest(".sugg"))e.preventDefault();});
+$("log").addEventListener("click",e=>{
+  const pk=e.target.closest(".sugg .pick"),fg=e.target.closest(".sugg .forget");if(!pk&&!fg)return;
+  e.stopPropagation();
+  const row=e.target.closest(".exr"),input=row.querySelector(".nm"),card=row.closest(".wo"),w=wById(card.dataset.w);
+  if(fg){const k=low(fg.dataset.n);state.names=state.names.filter(x=>low(x)!==k);save();showSugg(input);input.focus();return;}
+  input.value=pk.dataset.n;w.rows[+row.dataset.i].n=input.value;rememberName(input.value);save();closeSugg();
+  row.querySelector('[data-k="s"]').focus();
+},true);
+$("log").addEventListener("focusout",e=>{
+  if(!e.target.matches(".nm"))return;
+  /* if the name was edited, forget the old spelling unless another row still uses it */
+  const old=e.target._orig;
+  if(old&&low(old)!==low(e.target.value)&&!state.workouts.some(w=>w.rows.some(r=>low(r.n)===low(old)))){const k=low(old);state.names=state.names.filter(x=>low(x)!==k);}
+  rememberName(e.target.value);e.target._orig=e.target.value;logSave();
+  setTimeout(()=>{if(!document.activeElement||!document.activeElement.matches(".nm"))closeSugg();},150);
+});
+$("log").addEventListener("focusin",e=>{if(e.target.matches(".nm")){if(e.target._orig===undefined)e.target._orig=e.target.value;showSugg(e.target);}else closeSugg();});
+function logSave(){clearTimeout(logSaveT);logSaveT=setTimeout(save,350);}
+function tidy(w){w.rows=w.rows.filter(r=>r.n.trim()||r.s||r.r||r.w);}
+function newWorkout(from){
+  clearTimeout(logSaveT);state.workouts.forEach(tidy);state.workouts=state.workouts.filter(x=>x.rows.length);
+  const w={id:"w"+Date.now().toString(36)+Math.random().toString(36).slice(2,5),date:todayKey(),focus:from?from.focus:"",ts:Date.now(),
+    rows:from?from.rows.map(r=>({...r})):[{n:"",s:"",r:"",w:""}]};
+  state.workouts.push(w);openW=new Set([w.id]);save();renderLog();
+  const card=document.querySelector('.wo[data-w="'+w.id+'"]');
+  if(card){card.scrollIntoView({block:"start",behavior:"smooth"});if(!from){const n=card.querySelector(".nm");setTimeout(()=>n&&n.focus(),350);}}
+}
+$("log").addEventListener("click",e=>{
+  const b=e.target.closest("[data-act]");if(!b)return;
+  const act=b.dataset.act;if(act==="new"){newWorkout();return;}
+  const card=b.closest(".wo"),w=card&&wById(card.dataset.w);if(!w)return;
+  if(act==="open"){openW.add(w.id);renderLog();return;}
+  if(act==="add"){w.rows.push({n:"",s:"",r:"",w:""});save();renderLog();
+    const rows=document.querySelectorAll('.wo[data-w="'+w.id+'"] .nm');rows[rows.length-1].focus();return;}
+  if(act==="rm"){const i=+b.closest(".exr").dataset.i;w.rows.splice(i,1);if(!w.rows.length)w.rows.push({n:"",s:"",r:"",w:""});save();renderLog();return;}
+  if(act==="close"){tidy(w);if(!w.rows.length)state.workouts=state.workouts.filter(x=>x!==w);openW.delete(w.id);save();renderLog();buzz();return;}
+  if(act==="copy"){tidy(w);newWorkout(w);return;}
+  if(act==="del"){
+    /* two taps: first arms the button, second deletes (no browser pop-up needed) */
+    if(!b.classList.contains("armed")){b.classList.add("armed");b.textContent="Emin misin? Sil";clearTimeout(b._t);
+      b._t=setTimeout(()=>{b.classList.remove("armed");b.textContent="Sil";},3500);buzz();return;}
+    clearTimeout(logSaveT);logSaveT=null;state.workouts=state.workouts.filter(x=>x!==w);openW.delete(w.id);save();renderLog();buzz();return;}
+});
+$("log").addEventListener("input",e=>{
+  const el=e.target,card=el.closest(".wo"),w=card&&wById(card.dataset.w);if(!w)return;
+  if(el.dataset.k){const i=+el.closest(".exr").dataset.i;w.rows[i][el.dataset.k]=el.value.slice(0,el.dataset.k==="n"?80:10);
+    card.querySelector(".sum").innerHTML=sumHTML(w);logSave();
+    if(el.dataset.k==="n")showSugg(el);}
+});
+$("log").addEventListener("change",e=>{
+  const el=e.target,card=el.closest(".wo"),w=card&&wById(card.dataset.w);if(!w||!el.dataset.f)return;
+  if(el.dataset.f==="date"&&/^\d{4}-\d{2}-\d{2}$/.test(el.value))w.date=el.value;
+  if(el.dataset.f==="focus")w.focus=el.value;
+  save();renderLog();
+});
+/* Enter on a field jumps to the next one */
+$("log").addEventListener("keydown",e=>{
+  if(e.key!=="Enter"||!e.target.matches(".exr input"))return;e.preventDefault();
+  const all=[...e.target.closest(".wo").querySelectorAll(".exr input")],i=all.indexOf(e.target);
+  if(i<all.length-1)all[i+1].focus();else e.target.closest(".wo").querySelector('[data-act="add"]').click();
+});
+
+/* ---------- Tabs ---------- */
+function setTab(t){
+  document.body.classList.toggle("tab-guide",t==="guide");document.body.classList.toggle("tab-log",t==="log");
+  $("viewCal").classList.toggle("on",t==="cal");$("viewGuide").classList.toggle("on",t==="guide");$("viewLog").classList.toggle("on",t==="log");
+  document.querySelectorAll(".tabbar button").forEach(b=>b.classList.toggle("on",b.dataset.tab===t));
+  if(t==="guide"){renderChips();renderGuide();}
+  if(t==="log")renderLog();
+  if(t!=="log"&&state.workouts.some(w=>openW.has(w.id))){clearTimeout(logSaveT);save();}
+  try{localStorage.setItem("sporTakvim.tab",t);}catch(e){}
+}
+function showGuide(id,keepTab){
+  guideId=id;try{localStorage.setItem("sporTakvim.guide",id);}catch(e){}
+  if(document.body.classList.contains("tab-guide")){renderChips();renderGuide();}else setTab("guide");
+  window.scrollTo(0,0);
+}
+document.querySelectorAll(".tabbar button").forEach(b=>b.onclick=()=>{setTab(b.dataset.tab);window.scrollTo(0,0);});
+
+render();
+try{const t=localStorage.getItem("sporTakvim.tab");if(t==="guide"||t==="log")setTab(t);}catch(e){}
+/* typing is saved with a short delay; flush it if the app is closed or hidden */
+function flushLog(){if(logSaveT){clearTimeout(logSaveT);logSaveT=null;save();}}
+document.addEventListener("visibilitychange",()=>{if(document.hidden)flushLog();});
+window.addEventListener("pagehide",flushLog);
+</script>
+</body>
+</html>
